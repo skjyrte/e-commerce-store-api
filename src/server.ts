@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import cors from "cors";
 import router from "./routes/product.js";
 
-dotenv.config();
+const envFile = process.env.NODE_ENV === "production" ? "./.env" : "./.env.dev";
+dotenv.config({ path: envFile });
+
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -11,7 +13,7 @@ app.use(cors());
 
 app.use("/product", router);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`App is running at port: ${PORT}`);
 });
