@@ -4,10 +4,10 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: e-commerce-store-api
+      dockerfile: dockerfile.dev
+    container_name: e-commerce-store-api-dev
     env_file:
-      - .env
+      - .env.dev
     ports:
       - "${PORT}:${PORT}"
     depends_on:
@@ -18,9 +18,9 @@ services:
 
   postgres:
     image: postgres:latest
-    container_name: e-commerce-store-api-db
+    container_name: e-commerce-store-api-db-dev
     env_file:
-      - .env
+      - .env.dev
     environment:
       POSTGRES_USER: ${USER}
       POSTGRES_PASSWORD: ${PASSWORD}
@@ -28,9 +28,9 @@ services:
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data-dev:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 volumes:
-  postgres-data:
+  postgres-data-dev:
     driver: local
