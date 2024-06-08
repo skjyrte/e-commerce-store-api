@@ -1,11 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import router from "./routes/product.js";
 
-const envFile = process.env.NODE_ENV === "production" ? "./.env" : "./.env.dev";
+const envFile =
+  process.env.NODE_ENV === "production" ? ".env.prod" : ".env.dev";
 dotenv.config({ path: envFile });
 console.log(process.env);
+
+import router from "./routes/product.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
