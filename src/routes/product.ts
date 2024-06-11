@@ -6,8 +6,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM users");
-    console.log(result.rows);
+    const result = await client.query("SELECT * FROM products");
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error executing query", error);
