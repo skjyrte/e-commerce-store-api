@@ -1,4 +1,4 @@
-import "./config.ts"; //import for side effects only
+import "./config.js"; //import for side effects only
 import express from "express";
 import cors from "cors";
 import router from "./routes/product.js";
