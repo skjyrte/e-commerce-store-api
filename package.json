@@ -7,7 +7,7 @@
     "node": "22.2.0"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon -I --exec node  --loader=ts-node/esm ./src/server.ts",
+    "dev": "cross-env NODE_ENV=development nodemon -L --exec \"node --loader ts-node/esm\" ./src/server.ts",
     "build": "tsc",
     "prod": "npm run build && cross-env NODE_ENV=production node dist/server.js"
   },
