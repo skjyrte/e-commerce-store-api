@@ -3,7 +3,6 @@ import express from "express";
 import cors from "cors";
 import router from "./routes/product.js";
 
-console.log(process.env);
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
