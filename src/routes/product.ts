@@ -38,12 +38,22 @@ router.get("/:id", async (req, res) => {
     );
 
     if (result.rows.length > 0) {
+      console.log(result.rows);
       const product = {
         ...result.rows[0],
-        stock: result.rows.map((row) => ({ size: row.size, count: row.count })),
-        images: result.rows.map((row) => row.image_url),
+        size: undefined,
+        count: undefined,
+        image_url: undefined,
+        stock: Array.from(
+          new Map(
+            result.rows.map((item) => [
+              item.size,
+              { size: item.size, count: item.count },
+            ])
+          ).values()
+        ),
+        images: [...new Set(result.rows.map((row) => row.image_url))],
       };
-
       res.status(200).json(product);
     } else {
       res.status(404).json({ success: false, message: "Product not found" });
