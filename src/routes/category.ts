@@ -27,38 +27,24 @@ interface ProductWithStock extends Product {
   image_url?: string;
 }
 
-router.get("/", async (req, res) => {
+router.get("/:category", async (req, res) => {
   const client = await pool.connect();
-  try {
-    const result = await client.query("SELECT * FROM products");
-    res.status(200).json(result.rows);
-  } catch (error) {
-    console.error("Error executing query", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  } finally {
-    client.release();
-  }
-});
-
-router.get("/:id", async (req, res) => {
-  const client = await pool.connect();
-  const { id } = req.params;
+  const { category } = req.params;
+  console.log("category input:");
+  console.log(category);
   try {
     const result = await client.query(
       `SELECT 
         products.*, 
         product_stock.size, 
-        product_stock.count, 
-        product_images.image_url
-        FROM 
-          products
-        LEFT JOIN 
-          product_stock ON products.id = product_stock.product_id
-        LEFT JOIN 
-          product_images ON products.id = product_images.product_id
-       WHERE 
-         products.id = $1`,
-      [id]
+        product_stock.count
+      FROM 
+        products
+      LEFT JOIN 
+        product_stock ON products.id = product_stock.product_id
+      WHERE 
+        products.category = $1`,
+      [category]
     );
 
     if (result.rows.length > 0) {
@@ -85,7 +71,7 @@ router.get("/:id", async (req, res) => {
 
       res.status(200).json(uniqueProducts);
     } else {
-      res.status(404).json({ success: false, message: "Product not found" });
+      res.status(404).json({ success: false, message: "Category not found" });
     }
   } catch (error) {
     console.error("Error executing query", error);
