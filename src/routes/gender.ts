@@ -96,7 +96,11 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       product_stock ON products.id = product_stock.product_id
     LEFT JOIN 
       product_images ON products.id = product_images.product_id
-    WHERE 1=1 AND products.gender = $1 AND products.category = $2`;
+      WHERE products.id IN (
+      SELECT DISTINCT products.id
+      FROM products
+      LEFT JOIN product_stock ON products.id = product_stock.product_id
+      WHERE 1=1 AND products.gender = $1 AND products.category = $2`;
 
     const queryParams: any[] = [gender, category];
     let paramIndex = 3;
@@ -111,7 +115,17 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       });
     }
 
-    /*     if (sizesArray.length > 0 && sizesArray[0] !== "") {
+    if (colorsArray.length > 0 && colorsArray[0] !== "") {
+      colorsArray.forEach((color, index) => {
+        query +=
+          index === 0
+            ? ` AND products.color = $${paramIndex++}`
+            : ` OR products.color = $${paramIndex++}`;
+        queryParams.push(color);
+      });
+    }
+
+    if (sizesArray.length > 0 && sizesArray[0] !== "") {
       sizesArray.forEach((size, index) => {
         query +=
           index === 0
@@ -119,17 +133,14 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
             : ` OR product_stock.size = $${paramIndex++}`;
         queryParams.push(size);
       });
-    } */
-
-    /*     if (size) {
-      query += ` AND product_stock.size = $${paramIndex++}`;
-      queryParams.push(size);
-    } */
+    }
 
     if (material) {
       query += ` AND products.material = $${paramIndex++}`;
       queryParams.push(material);
     }
+
+    query += `)`;
 
     const result = await client.query(query, queryParams);
 

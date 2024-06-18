@@ -17,6 +17,7 @@ interface Product {
   ratingReviews: number;
   ratingValue: number;
   thumbnail: string;
+  color: string;
 }
 
 interface ProductWithStockAndImages extends Product {

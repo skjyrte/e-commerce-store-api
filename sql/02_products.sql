@@ -13,5 +13,6 @@ CREATE TABLE products (
     initialPrice DECIMAL(6, 2),
     ratingReviews INT,
     ratingValue DECIMAL(3, 2),
-    thumbnail TEXT
+    thumbnail TEXT,
+    color color_type
 );
