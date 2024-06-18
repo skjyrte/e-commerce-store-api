@@ -77,4 +77,86 @@ async function handleGetRequest(query: string, params: any[], res: Response) {
   }
 }
 
-export { processSQLRows, createResponse, handleGetRequest };
+const processVariants = (variants: string) => {
+  /* brand_color__size */
+  const brand: string[] = [];
+  const color: string[] = [];
+  const size: string[] = [];
+
+  /* brand */
+  if (variants[0] !== "_") {
+    if (variants.includes("_") && variants.includes("__")) {
+      variants
+        .slice(
+          0,
+          variants.indexOf("__") < variants.indexOf("_")
+            ? variants.indexOf("__")
+            : variants.indexOf("_")
+        )
+        .split(".")
+        .forEach((b) => {
+          if (b !== "") {
+            brand.push(b);
+          }
+        });
+    } else if (variants.includes("_")) {
+      variants
+        .slice(0, variants.indexOf("_"))
+        .split(".")
+        .forEach((b) => {
+          if (b !== "") {
+            brand.push(b);
+          }
+        });
+    } else if (variants.includes("__")) {
+      variants
+        .slice(0, variants.indexOf("__"))
+        .split(".")
+        .forEach((b) => {
+          if (b !== "") {
+            brand.push(b);
+          }
+        });
+    } else {
+      variants.split(".").forEach((b) => {
+        if (b !== "") {
+          brand.push(b);
+        }
+      });
+    }
+  }
+  /* color */
+  if (variants.includes("_")) {
+    if (variants.includes("__")) {
+      variants
+        .slice(variants.indexOf("_") + 1, variants.indexOf("__"))
+        .split(".")
+        .forEach((c) => {
+          if (c !== "") {
+            color.push(c);
+          }
+        });
+    } else {
+      variants
+        .slice(variants.indexOf("_") + 1)
+        .split(".")
+        .forEach((c) => {
+          if (c !== "") {
+            color.push(c);
+          }
+        });
+    }
+  }
+  /* size */
+  if (variants.includes("__")) {
+    variants
+      .slice(variants.indexOf("__size-") + 7)
+      .split(".")
+      .forEach((s) => size.push(s));
+  }
+
+  console.log({ brandsArray: brand, colorsArray: color, sizesArray: size });
+  return { brandsArray: brand, colorsArray: color, sizesArray: size };
+};
+
+export { processSQLRows, createResponse, handleGetRequest, processVariants };
