@@ -1,3 +1,6 @@
+import express, { Request, Response } from "express";
+import pool from "../db.js";
+
 interface Product {
   id: string;
   brand: string;
@@ -52,4 +55,26 @@ function createResponse(
   }
 }
 
-export { processSQLRows, createResponse };
+async function handleGetRequest(query: string, params: any[], res: Response) {
+  /* FOR FORTHER USE */
+  const client = await pool.connect();
+  try {
+    const result = await client.query(query, params);
+
+    if (result.rows.length > 0) {
+      const processedResult = processSQLRows(result.rows);
+      res
+        .status(200)
+        .send(createResponse(true, "Request successful", processedResult));
+    } else {
+      res.status(404).send(createResponse(false, "No data found"));
+    }
+  } catch (error) {
+    console.error("Error executing query", error);
+    res.status(500).send(createResponse(false, "Internal server error"));
+  } finally {
+    client.release();
+  }
+}
+
+export { processSQLRows, createResponse, handleGetRequest };

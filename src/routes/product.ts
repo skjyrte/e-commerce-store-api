@@ -1,6 +1,6 @@
 import express from "express";
 import pool from "../db.js";
-import { processSQLRows, createResponse } from "./common.js";
+import { processSQLRows, createResponse } from "./routerUtilities.js";
 
 const router = express.Router();
 
@@ -55,3 +55,37 @@ router.get("/:id", async (req, res) => {
 });
 
 export default router;
+
+/* ALTERNATIVE SOLUTION
+import express from "express";
+import { handleGetRequest } from "./common.js";
+
+const router = express.Router();
+
+router.get("/", async (req, res) => {
+  const query = `
+    SELECT * FROM products
+  `;
+  handleGetRequest(query, [], res);
+});
+
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT 
+      products.*, 
+      product_stock.size, 
+      product_stock.count, 
+      product_images.image_url
+    FROM 
+      products
+    LEFT JOIN 
+      product_stock ON products.id = product_stock.product_id
+    LEFT JOIN 
+      product_images ON products.id = product_images.product_id
+    WHERE 
+      products.id = $1
+  `;
+  handleGetRequest(query, [id], res);
+
+  */

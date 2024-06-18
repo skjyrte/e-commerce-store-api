@@ -1,14 +1,12 @@
 import express from "express";
 import pool from "../db.js";
-import { processSQLRows, createResponse } from "./common.js";
+import { processSQLRows, createResponse } from "./routerUtilities.js";
 
 const router = express.Router();
 
 router.get("/:gender", async (req, res) => {
   const client = await pool.connect();
   const { gender } = req.params;
-  console.log("gender input:");
-  console.log(gender);
   try {
     const result = await client.query(
       `SELECT 
@@ -43,10 +41,6 @@ router.get("/:gender", async (req, res) => {
 router.get("/:gender/category/:category", async (req, res) => {
   const client = await pool.connect();
   const { gender, category } = req.params;
-  console.log("gender input:");
-  console.log(gender);
-  console.log("category input:");
-  console.log(category);
   try {
     const result = await client.query(
       `SELECT 
