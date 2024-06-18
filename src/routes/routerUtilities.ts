@@ -84,77 +84,58 @@ const processVariants = (variants: string) => {
   const color: string[] = [];
   const size: string[] = [];
 
-  /* brand */
-  if (variants[0] !== "_") {
-    if (variants.includes("_") && variants.includes("__")) {
-      variants
-        .slice(
-          0,
-          variants.indexOf("__") < variants.indexOf("_")
-            ? variants.indexOf("__")
-            : variants.indexOf("_")
-        )
-        .split(".")
-        .forEach((b) => {
-          if (b !== "") {
-            brand.push(b);
-          }
-        });
-    } else if (variants.includes("_")) {
-      variants
-        .slice(0, variants.indexOf("_"))
-        .split(".")
-        .forEach((b) => {
-          if (b !== "") {
-            brand.push(b);
-          }
-        });
-    } else if (variants.includes("__")) {
-      variants
-        .slice(0, variants.indexOf("__"))
-        .split(".")
-        .forEach((b) => {
-          if (b !== "") {
-            brand.push(b);
-          }
-        });
-    } else {
-      variants.split(".").forEach((b) => {
-        if (b !== "") {
-          brand.push(b);
-        }
-      });
+  const pushBrand = (variants: string) => {
+    let i = 0;
+    let brandString = "";
+    while (i < variants.length) {
+      if (variants[i] !== "_" && variants[i] !== "__") {
+        brandString += variants[i];
+      } else break;
+      i++;
     }
-  }
-  /* color */
-  if (variants.includes("_")) {
+    brandString.split(".").forEach((b) => {
+      if (b !== "") {
+        brand.push(b);
+      }
+    });
+  };
+
+  const pushColor = (variants: string) => {
+    if (variants.includes("_")) {
+      if (variants.includes("__")) {
+        variants
+          .slice(variants.indexOf("_") + 1, variants.indexOf("__"))
+          .split(".")
+          .forEach((c) => {
+            if (c !== "") {
+              color.push(c);
+            }
+          });
+      } else {
+        variants
+          .slice(variants.indexOf("_") + 1)
+          .split(".")
+          .forEach((c) => {
+            if (c !== "") {
+              color.push(c);
+            }
+          });
+      }
+    }
+  };
+
+  const pushSize = (variants: string) => {
     if (variants.includes("__")) {
       variants
-        .slice(variants.indexOf("_") + 1, variants.indexOf("__"))
+        .slice(variants.indexOf("__size-") + 7)
         .split(".")
-        .forEach((c) => {
-          if (c !== "") {
-            color.push(c);
-          }
-        });
-    } else {
-      variants
-        .slice(variants.indexOf("_") + 1)
-        .split(".")
-        .forEach((c) => {
-          if (c !== "") {
-            color.push(c);
-          }
-        });
+        .forEach((s) => size.push(s));
     }
-  }
-  /* size */
-  if (variants.includes("__")) {
-    variants
-      .slice(variants.indexOf("__size-") + 7)
-      .split(".")
-      .forEach((s) => size.push(s));
-  }
+  };
+
+  pushBrand(variants);
+  pushColor(variants);
+  pushSize(variants);
 
   console.log({ brandsArray: brand, colorsArray: color, sizesArray: size });
   return { brandsArray: brand, colorsArray: color, sizesArray: size };
