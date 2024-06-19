@@ -89,6 +89,7 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
   /* create arrays */
   const { brandsArray, colorsArray, sizesArray } = processVariants(variants);
   const materialsArray = createQueryArray(material);
+  console.log(materialsArray);
 
   try {
     let query = `
@@ -132,7 +133,7 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
     joinVariants(sizesArray, "product_stock.size");
     joinVariants(colorsArray, "products.color");
     joinVariants(brandsArray, "products.brand");
-    joinVariants(materialsArray, "products.brand");
+    joinVariants(materialsArray, "products.material");
 
     query += `)`;
 
