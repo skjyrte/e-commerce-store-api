@@ -141,4 +141,22 @@ const processVariants = (variants: string) => {
   return { brandsArray: brand, colorsArray: color, sizesArray: size };
 };
 
-export { processSQLRows, createResponse, handleGetRequest, processVariants };
+const createQueryArray = (queryToDivide: unknown) => {
+  if (typeof queryToDivide === "string") {
+    const queryArray: string[] = [];
+    queryToDivide.split(".").forEach((q) => {
+      if (q !== "") {
+        queryArray.push(q);
+      }
+    });
+    return [...queryArray];
+  } else return [];
+};
+
+export {
+  processSQLRows,
+  createResponse,
+  handleGetRequest,
+  processVariants,
+  createQueryArray,
+};

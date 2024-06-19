@@ -4,6 +4,7 @@ import {
   processSQLRows,
   createResponse,
   processVariants,
+  createQueryArray,
 } from "./routerUtilities.js";
 
 const router = express.Router();
@@ -77,11 +78,17 @@ router.get("/:gender/category/:category", async (req, res) => {
 });
 
 router.get("/:gender/category/:category/:variants", async (req, res) => {
+  /* 
+  capable of handling:
+  http://localhost:4000/gender/:gender/category/:category/brand1.brand2.brand3_color1.color2.color3__size-size1.size2.size3?material=material 
+  */
   const client = await pool.connect();
   const { gender, category, variants } = req.params;
   const { material } = req.query;
 
+  /* create arrays */
   const { brandsArray, colorsArray, sizesArray } = processVariants(variants);
+  const materialsArray = createQueryArray(material);
 
   try {
     let query = `
@@ -103,42 +110,29 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       WHERE 1=1 AND products.gender = $1 AND products.category = $2`;
 
     const queryParams: any[] = [gender, category];
-    let paramIndex = 3;
+    let paramIndex = queryParams.length + 1;
 
-    if (brandsArray.length > 0 && brandsArray[0] !== "") {
-      brandsArray.forEach((brand, index) => {
-        query +=
-          index === 0
-            ? ` AND products.brand = $${paramIndex++}`
-            : ` OR products.brand = $${paramIndex++}`;
-        queryParams.push(brand);
+    function joinVariants(queryArray: string[], queryTitle: string) {
+      let subQuery = "";
+      queryArray.forEach((q, i) => {
+        if (i === 0) {
+          subQuery += ` AND (${queryTitle} = $${paramIndex++}`;
+          queryParams.push(q);
+        } else {
+          subQuery += ` OR ${queryTitle} = $${paramIndex++}`;
+          queryParams.push(q);
+        }
       });
+      if (subQuery.length !== 0) {
+        subQuery += `)`;
+      }
+      query += subQuery;
     }
 
-    if (colorsArray.length > 0 && colorsArray[0] !== "") {
-      colorsArray.forEach((color, index) => {
-        query +=
-          index === 0
-            ? ` AND products.color = $${paramIndex++}`
-            : ` OR products.color = $${paramIndex++}`;
-        queryParams.push(color);
-      });
-    }
-
-    if (sizesArray.length > 0 && sizesArray[0] !== "") {
-      sizesArray.forEach((size, index) => {
-        query +=
-          index === 0
-            ? ` AND product_stock.size = $${paramIndex++}`
-            : ` OR product_stock.size = $${paramIndex++}`;
-        queryParams.push(size);
-      });
-    }
-
-    if (material) {
-      query += ` AND products.material = $${paramIndex++}`;
-      queryParams.push(material);
-    }
+    joinVariants(sizesArray, "product_stock.size");
+    joinVariants(colorsArray, "products.color");
+    joinVariants(brandsArray, "products.brand");
+    joinVariants(materialsArray, "products.brand");
 
     query += `)`;
 
