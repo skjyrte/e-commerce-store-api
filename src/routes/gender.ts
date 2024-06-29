@@ -80,7 +80,7 @@ router.get("/:gender/category/:category", async (req, res) => {
 router.get("/:gender/category/:category/:variants", async (req, res) => {
   /* 
   capable of handling:
-  http://localhost:4000/gender/:gender/category/:category/brand1.brand2.brand3_color1.color2.color3__size-size1.size2.size3?material=material 
+  http://localhost:4000/gender/:gender/category/:category/brand1.brand2.brand3_color1.color2.color3__size-size1.size2.size3?material=material1.material2.material3
   */
   const client = await pool.connect();
   const { gender, category, variants } = req.params;

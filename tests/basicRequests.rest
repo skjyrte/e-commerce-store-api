@@ -11,6 +11,7 @@ GET http://localhost:4000/gender/men/
 
 ### get category-sneakers
 GET http://localhost:4000/category/sneakers
+
 ### Get gender-men, category-sneakers, brand-Zalton or UrbanStep, 
-###color-red or white or black, size-40 or 41 or 46 or 48, material-mesh
+### color-red or white or black, size-40 or 41 or 46 or 48, material-mesh
 GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh
