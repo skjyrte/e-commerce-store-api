@@ -1,12 +1,12 @@
 import express from "express";
 import pool from "../db.js";
-import { processSQLRows, createResponse } from "./routerUtilities.js";
+import {processSQLRows, createResponse} from "./routerUtilities.js";
 
 const router = express.Router();
 
 router.get("/:category", async (req, res) => {
   const client = await pool.connect();
-  const { category } = req.params;
+  const {category} = req.params;
   try {
     const result = await client.query(
       `SELECT 

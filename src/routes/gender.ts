@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/:gender", async (req, res) => {
   const client = await pool.connect();
-  const { gender } = req.params;
+  const {gender} = req.params;
   try {
     const result = await client.query(
       `SELECT 
@@ -45,7 +45,7 @@ router.get("/:gender", async (req, res) => {
 
 router.get("/:gender/category/:category", async (req, res) => {
   const client = await pool.connect();
-  const { gender, category } = req.params;
+  const {gender, category} = req.params;
   try {
     const result = await client.query(
       `SELECT 
@@ -83,11 +83,11 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
   http://localhost:4000/gender/:gender/category/:category/brand1.brand2.brand3_color1.color2.color3__size-size1.size2.size3?material=material1.material2.material3
   */
   const client = await pool.connect();
-  const { gender, category, variants } = req.params;
-  const { material } = req.query;
+  const {gender, category, variants} = req.params;
+  const {material} = req.query;
 
   /* create arrays */
-  const { brandsArray, colorsArray, sizesArray } = processVariants(variants);
+  const {brandsArray, colorsArray, sizesArray} = processVariants(variants);
   const materialsArray = createQueryArray(material);
   console.log(materialsArray);
 
@@ -110,10 +110,10 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       LEFT JOIN product_stock ON products.id = product_stock.product_id
       WHERE 1=1 AND products.gender = $1 AND products.category = $2`;
 
-    const queryParams: any[] = [gender, category];
+    const queryParams: string[] = [gender, category];
     let paramIndex = queryParams.length + 1;
 
-    function joinVariants(queryArray: string[], queryTitle: string) {
+    const joinVariants = (queryArray: string[], queryTitle: string) => {
       let subQuery = "";
       queryArray.forEach((q, i) => {
         if (i === 0) {
@@ -125,17 +125,17 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
         }
       });
       if (subQuery.length !== 0) {
-        subQuery += `)`;
+        subQuery += ")";
       }
       query += subQuery;
-    }
+    };
 
     joinVariants(sizesArray, "product_stock.size");
     joinVariants(colorsArray, "products.color");
     joinVariants(brandsArray, "products.brand");
     joinVariants(materialsArray, "products.material");
 
-    query += `)`;
+    query += ")";
 
     const result = await client.query(query, queryParams);
 

@@ -6,7 +6,7 @@ import genderRoute from "./routes/gender.js";
 import categoryRoute from "./routes/category.js";
 
 const app = express();
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cors());
 

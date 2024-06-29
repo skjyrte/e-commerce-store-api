@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import {Response} from "express";
 import pool from "../db.js";
 
 interface Product {
@@ -32,7 +32,7 @@ const mergeCommonDataIntoObject = (product: ProductWithStockAndImages[]) => ({
   count: undefined,
   stock: Array.from(
     new Map(
-      product.map((item) => [item.size, { size: item.size, count: item.count }])
+      product.map((item) => [item.size, {size: item.size, count: item.count}])
     ).values()
   ),
   images: [...new Set(product.map((row) => row.image_url))],
@@ -50,13 +50,17 @@ function createResponse(
   data?: ProductWithStockAndImages[]
 ) {
   if (data === undefined) {
-    return { success: success, message: message };
+    return {success: success, message: message};
   } else {
-    return { success: success, message: message, data: data };
+    return {success: success, message: message, data: data};
   }
 }
 
-async function handleGetRequest(query: string, params: any[], res: Response) {
+async function handleGetRequest(
+  query: string,
+  params: string[],
+  res: Response
+) {
   /* FOR FORTHER USE */
   const client = await pool.connect();
   try {
@@ -137,8 +141,8 @@ const processVariants = (variants: string) => {
   pushColor(variants);
   pushSize(variants);
 
-  console.log({ brandsArray: brand, colorsArray: color, sizesArray: size });
-  return { brandsArray: brand, colorsArray: color, sizesArray: size };
+  console.log({brandsArray: brand, colorsArray: color, sizesArray: size});
+  return {brandsArray: brand, colorsArray: color, sizesArray: size};
 };
 
 const createQueryArray = (queryToDivide: unknown) => {

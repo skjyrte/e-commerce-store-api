@@ -1,6 +1,6 @@
 import express from "express";
 import pool from "../db.js";
-import { processSQLRows, createResponse } from "./routerUtilities.js";
+import {processSQLRows, createResponse} from "./routerUtilities.js";
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     res.status(200).json(result.rows);
   } catch (error) {
     console.error("Error executing query", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({success: false, message: "Internal Server Error"});
   } finally {
     client.release();
   }
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   const client = await pool.connect();
-  const { id } = req.params;
+  const {id} = req.params;
   try {
     const result = await client.query(
       `SELECT 
