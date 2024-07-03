@@ -47,12 +47,12 @@ function processSQLRows(rows: Product[]) {
 function createResponse(
   success: boolean,
   message: string,
-  data?: ProductWithStockAndImages[]
+  payload?: ProductWithStockAndImages[]
 ) {
-  if (data === undefined) {
+  if (payload === undefined) {
     return {success: success, message: message};
   } else {
-    return {success: success, message: message, data: data};
+    return {success: success, message: message, payload: payload};
   }
 }
 
@@ -72,7 +72,7 @@ async function handleGetRequest(
         .status(200)
         .send(createResponse(true, "Request successful", processedResult));
     } else {
-      res.status(404).send(createResponse(false, "No data found"));
+      res.status(404).send(createResponse(false, "No payload found"));
     }
   } catch (error) {
     console.error("Error executing query", error);
