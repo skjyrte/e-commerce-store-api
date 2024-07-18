@@ -23,7 +23,7 @@ interface Product {
 interface ProductWithStockAndImages extends Product {
   size?: string;
   count?: number;
-  image_url?: string;
+  imageUrl?: string;
 }
 
 const mergeCommonDataIntoObject = (product: ProductWithStockAndImages[]) => ({
@@ -35,7 +35,7 @@ const mergeCommonDataIntoObject = (product: ProductWithStockAndImages[]) => ({
       product.map((item) => [item.size, {size: item.size, count: item.count}])
     ).values()
   ),
-  images: [...new Set(product.map((row) => row.image_url))],
+  images: [...new Set(product.map((row) => row.imageUrl))],
 });
 
 function processSQLRows(rows: Product[]) {
