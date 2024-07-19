@@ -6,13 +6,13 @@ CREATE TABLE products (
     category shoe_type,
     material material_type,
     season season_type,
-    shortDescription VARCHAR(100),
+    short_description VARCHAR(100),
     description VARCHAR(300),
     features TEXT[],
     price DECIMAL(6, 2),
-    initialPrice DECIMAL(6, 2),
-    ratingReviews INT,
-    ratingValue DECIMAL(3, 2),
+    initial_price DECIMAL(6, 2),
+    rating_reviews INT,
+    rating_value DECIMAL(3, 2),
     thumbnail TEXT,
     color color_type
 );
