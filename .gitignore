@@ -1,7 +1,18 @@
-﻿/node_modules
-/dist
+﻿# Ignore node modules directory
+node_modules/
 
+# Ignore build directories
+dist/
+build/
+
+# Ignore temporary supplementary files
+temp/
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+
+# Environment variable files
 .env
 .env.prod
-
-
