@@ -1,6 +1,7 @@
 import express from "express";
 import pool from "../db.js";
-import {processSQLRows, createResponse} from "./routerUtilities.js";
+import processSQLProductBasicData from "./routerUtilities/processSQLProductBasicData.js";
+import createResponse from "./routerUtilities/createResponse.js";
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.get("/:category", async (req, res) => {
     );
 
     if (result.rows.length > 0) {
-      const processedResult = processSQLRows(result.rows);
+      const processedResult = processSQLProductBasicData(result.rows);
       res
         .status(200)
         .send(createResponse(true, "GET Request Called", processedResult));
