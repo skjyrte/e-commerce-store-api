@@ -41,7 +41,7 @@ function isProductBasicDataDatabaseArray(
   return arr.every(isProductBasicDataDatabase);
 }
 
-function processSQLProducts(rows: unknown): ProductBasicDataResponse[] {
+function processSQLProductBasicData(rows: unknown): ProductBasicDataResponse[] {
   if (!Array.isArray(rows) || !isProductBasicDataDatabaseArray(rows)) {
     throw new Error(
       "Invalid input: rows must be an array of ProductBasicDataDatabase objects"
@@ -88,4 +88,4 @@ function processSQLProducts(rows: unknown): ProductBasicDataResponse[] {
   return processSQLRows(rows);
 }
 
-export default processSQLProducts;
+export default processSQLProductBasicData;
