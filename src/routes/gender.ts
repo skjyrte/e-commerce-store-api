@@ -1,11 +1,9 @@
 import express from "express";
 import pool from "../db.js";
-import {
-  processSQLRows,
-  createResponse,
-  processVariants,
-  createQueryArray,
-} from "./routerUtilities.js";
+import processSQLProductBasicData from "./routerUtilities/processSQLProductBasicData";
+import createResponse from "./routerUtilities/createResponse";
+import processVariants from "./routerUtilities/processVariants";
+import createQueryArray from "./routerUtilities/createQueryArray";
 
 const router = express.Router();
 
@@ -28,7 +26,7 @@ router.get("/:gender", async (req, res) => {
     );
 
     if (result.rows.length > 0) {
-      const processedResult = processSQLRows(result.rows);
+      const processedResult = processSQLProductBasicData(result.rows);
       res
         .status(200)
         .send(createResponse(true, "GET Request Called", processedResult));
@@ -62,7 +60,7 @@ router.get("/:gender/category/:category", async (req, res) => {
     );
 
     if (result.rows.length > 0) {
-      const processedResult = processSQLRows(result.rows);
+      const processedResult = processSQLProductBasicData(result.rows);
       res
         .status(200)
         .send(createResponse(true, "GET Request Called", processedResult));
@@ -78,10 +76,6 @@ router.get("/:gender/category/:category", async (req, res) => {
 });
 
 router.get("/:gender/category/:category/:variants", async (req, res) => {
-  /* 
-  capable of handling:
-  http://localhost:4000/gender/:gender/category/:category/brand1.brand2.brand3_color1.color2.color3__size-size1.size2.size3?material=material1.material2.material3
-  */
   const client = await pool.connect();
   const {gender, category, variants} = req.params;
   const {material} = req.query;
@@ -89,7 +83,6 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
   /* create arrays */
   const {brandsArray, colorsArray, sizesArray} = processVariants(variants);
   const materialsArray = createQueryArray(material);
-  console.log(materialsArray);
 
   try {
     let query = `
@@ -140,7 +133,7 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
     const result = await client.query(query, queryParams);
 
     if (result.rows.length > 0) {
-      const processedResult = processSQLRows(result.rows);
+      const processedResult = processSQLProductBasicData(result.rows);
       res
         .status(200)
         .send(createResponse(true, "GET Request Called", processedResult));

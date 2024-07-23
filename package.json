@@ -7,8 +7,8 @@
     "node": "20.15.1"
   },
   "scripts": {
-    "nodemon_dev": "cross-env NODE_ENV=development NODE_OPTIONS='--trace-warnings' nodemon -L --exec \"node --loader ts-node/esm\" ./src/server.ts",
-    "tsn_dev": "cross-env NODE_ENV=development node --loader ts-node/esm --experimental-specifier-resolution=node ./src/server.ts",
+    "nodemondev": "cross-env NODE_ENV=development NODE_OPTIONS='--trace-warnings' nodemon -L --exec \"node --loader ts-node/esm\" ./src/server.ts",
+    "tsndev": "cross-env NODE_ENV=development node --loader ts-node/esm --experimental-specifier-resolution=node ./src/server.ts",
     "build": "tsc",
     "prod": "npm run build && cross-env NODE_ENV=production node ./dist/src/server.js",
     "test": "jest",
