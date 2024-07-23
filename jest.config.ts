@@ -193,15 +193,15 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
-  preset: "ts-jest",
+  preset: "ts-jest/presets/js-with-ts-esm", //NOTE - required preset for es6 modules
   testEnvironment: "node",
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  testMatch: ["**/?(*.)+(spec|test).[tj]s?(x)"],
-  globals: {
-    "ts-jest": {
-      tsconfig: "tsconfig.jest.json",
-    },
+  transform: {
+    "^.+\\.tsx?$": "ts-jest",
   },
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
+  extensionsToTreatAsEsm: [".ts"],
 };
 
 export default config;
