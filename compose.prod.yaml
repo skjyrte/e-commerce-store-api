@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile.prod
-    container_name: e-commerce-store-api
+    container_name: e-commerce-store-api-prod
     env_file:
       - .env.prod
     ports:
