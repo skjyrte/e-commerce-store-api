@@ -93,10 +93,17 @@ VALUES
 ('a1524b05-64a6-4d2d-9d6b-6ab57b804923', 'https://example.com/image1_1.jpg'),
 ('a1524b05-64a6-4d2d-9d6b-6ab57b804923', 'https://example.com/image1_2.jpg'),
 ('a1524b05-64a6-4d2d-9d6b-6ab57b804923', 'https://example.com/image1_3.jpg'),
+
 -- Product 2 Images
-('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://example.com/image2_1.jpg'),
-('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://example.com/image2_2.jpg'),
-('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://example.com/image2_3.jpg'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/fd5f98b1-2cdf-49d6-a854-829c14fa79b1/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/3ed63ccb-f775-475a-ae2f-b9ca49e7f6c4/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/116c99aa-26ac-4fb0-8f1f-257f7b0664fb/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/bb031375-73f7-4521-9a8d-d46b83332188/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/fa595e0f-8a7f-4f04-9553-67d8265635f4/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/5707c17c-76ae-43e5-bd91-a5c984c1b13c/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/d6402fa7-f5ab-450a-98cc-76b98f8e9e54/buty-air-force-1-07-next-nature-7dl9fM.png'),
+('1d7837f2-ec4f-47f4-a434-b39440a298ef', 'https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,q_auto:eco/b01c67f2-2481-45d7-b383-a1476d768f6e/buty-air-force-1-07-next-nature-7dl9fM.png'),
+
 -- Product 3 Images
 ('30984c42-37de-4377-8de3-2d16f4897a18', 'https://example.com/image3_1.jpg'),
 ('30984c42-37de-4377-8de3-2d16f4897a18', 'https://example.com/image3_2.jpg'),
