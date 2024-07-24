@@ -1,0 +1,110 @@
+interface filterDataObject {
+  brandsArray: string[];
+  colorsArray: string[];
+  sizesArray: string[];
+}
+
+interface filterPath {
+  query: string | null;
+  path: string | null;
+}
+
+/**
+ * Processes variants from a query string.
+ *
+ * This function takes a query string parameter `variants` with the syntax
+ * "brand1.brand2.brand3_color1.color2.color3__size-size1.size2.size3" and processes it accordingly.
+ * There is no limitation on number of filters applied, the filters can be used in conjunction or separately.
+ *
+ * @param {string} filterPath - The query string containing the variants.
+ * @returns {any} - The processed result (you can replace 'any' with the actual return type).
+ */
+
+const processFilterPath = (filterPath: string): filterDataObject | null => {
+  const validateVariants = (filterPath: string): filterPath => {
+    //NOTE - Validation contains only basic cases.
+    //TODO - Data passed into brand, color, size arrays should be validated in recieving function.
+    try {
+      if ((filterPath.match(/\?/g) || []).length > 1) {
+        throw new Error("Invalid input: String contains more than one '?'.");
+      } else {
+        const pathAndQuery = filterPath.split("?");
+        const path = pathAndQuery[0] === "" ? null : pathAndQuery[0];
+        const query = pathAndQuery[1] === "" ? null : pathAndQuery[1];
+
+        if ((filterPath.match(/__size-/g) || []).length) {
+          if ((filterPath.match(/__size-/g) || []).length > 1) {
+            throw new Error(
+              "Invalid input: Contains more than one '__size-' delimiter."
+            );
+          } else if ((filterPath.match(/_/g) || []).length > 3) {
+            throw new Error(
+              "Invalid input: Contains more than one '_' delimiter."
+            );
+          }
+        } else {
+          if ((filterPath.match(/_/g) || []).length > 1) {
+            throw new Error(
+              "Invalid input: Contains more than one '_' delimiter."
+            );
+          }
+        }
+
+        if (/\.\.+/.test(filterPath)) {
+          throw new Error("Invalid input: Contains consecutive dots.");
+        }
+        return {
+          path: path,
+          query: query,
+        };
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.error("An unknown error occurred");
+      }
+      return {path: null, query: null};
+    }
+  };
+
+  try {
+    //TODO - query processing
+    const {path} = validateVariants(filterPath);
+
+    const processPath = (path: string) => {
+      const brandsRegex = /^(.*?)(?:_color|__size|$)/;
+      const colorsRegex = /_([^_]+?)(?:__size|$)/;
+      const sizesRegex = /__size[-]?(.+)/;
+
+      const brandsMatch = path.match(brandsRegex);
+      const colorsMatch = path.match(colorsRegex);
+      const sizesMatch = path.match(sizesRegex);
+
+      //NOTE - aray[0] is the entire matched string.
+      //NOTE - array[1], array[2], ..., array[n] are the matched strings from the corresponding capturing groups.
+      const brands = brandsMatch
+        ? brandsMatch[1].split(".").filter(Boolean)
+        : [];
+      const colors = colorsMatch
+        ? colorsMatch[1].split(".").filter(Boolean)
+        : [];
+      const sizes = sizesMatch ? sizesMatch[1].split(".").filter(Boolean) : [];
+
+      return {
+        brandsArray: brands,
+        colorsArray: colors,
+        sizesArray: sizes,
+      };
+    };
+    if (path !== null) return processPath(path);
+    else {
+      return null;
+    }
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+};
+
+export {processFilterPath, filterDataObject};

@@ -2,7 +2,7 @@ import express from "express";
 import pool from "../db.js";
 import processSQLProductBasicData from "./routerUtilities/processSQLProductBasicData";
 import createResponse from "./routerUtilities/createResponse";
-import processVariants from "./routerUtilities/processVariants";
+import processVariants from "./routerUtilities/processFilterPath.js";
 import createQueryArray from "./routerUtilities/createQueryArray";
 
 const router = express.Router();
