@@ -193,6 +193,8 @@ const config: Config = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+
+  verbose: true,
   preset: "ts-jest/presets/js-with-ts-esm", //NOTE - required preset for es6 modules
   testEnvironment: "node",
   transform: {
