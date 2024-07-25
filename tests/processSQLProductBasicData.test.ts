@@ -2,6 +2,11 @@ import {describe, expect} from "@jest/globals";
 import processSQLProductBasicData from "../src/routes/routerUtilities/processSQLProductBasicData";
 import Decimal from "decimal.js";
 
+import {
+  ProductBasicDataDatabase,
+  ProductBasicDataResponse,
+} from "./types/tests";
+
 //SECTION - test no. 1
 describe("processSQLProductBasicData: ", () => {
   it("Should process SQL rows and return the expected response: GET http://localhost:4000/category/sneakers", () => {
