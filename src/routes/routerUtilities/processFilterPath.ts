@@ -73,7 +73,7 @@ const processFilterPath = (filterPath: string): filterDataObject | null => {
     const {path} = validateVariants(filterPath);
 
     const processPath = (path: string) => {
-      const brandsRegex = /^(.*?)(?:_color|__size|$)/;
+      const brandsRegex = /^(.*?)(?:_|$)/;
       const colorsRegex = /_([^_]+?)(?:__size|$)/;
       const sizesRegex = /__size[-]?(.+)/;
 

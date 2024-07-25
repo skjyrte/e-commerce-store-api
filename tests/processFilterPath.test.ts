@@ -10,7 +10,7 @@ describe("processFilterPath: ", () => {
     const expectedInput =
       "Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh";
     const expectedOutput: filterDataObject = {
-      brandsArray: ["Zalton", "UrbanStep_red", "white", "black"],
+      brandsArray: ["Zalton", "UrbanStep"],
       colorsArray: ["red", "white", "black"],
       sizesArray: ["40", "41", "46", "48"],
     };
