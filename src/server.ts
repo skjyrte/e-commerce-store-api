@@ -1,9 +1,9 @@
-import "./config"; //import for side effects only
+import "./config.js"; //import for side effects only
 import express from "express";
 import cors from "cors";
 import productRoute from "./routes/product.js";
-import genderRoute from "./routes/gender";
-import categoryRoute from "./routes/category";
+import genderRoute from "./routes/gender.js";
+import categoryRoute from "./routes/category.js";
 
 const app = express();
 app.use(express.urlencoded({extended: true}));

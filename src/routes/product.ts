@@ -1,6 +1,6 @@
 import express from "express";
 import pool from "../db.js";
-import processSQLProductExtraData from "./routerUtilities/processSQLProductExtraData";
+import processSQLProductExtraData from "./routerUtilities/processSQLProductExtraData.js";
 import createResponse from "./routerUtilities/createResponse.js";
 
 const router = express.Router();
