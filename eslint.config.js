@@ -19,7 +19,7 @@ export default tseslint.config(
       },
       parser: tseslint.parser,
       parserOptions: {
-        project: true,
+        project: "./tsconfig.eslint.json",
       },
     },
     plugins: {jest}, //NOTE - required by jest syntax for flat config

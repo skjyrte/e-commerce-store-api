@@ -1,0 +1,4 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["src/**/*", "tests/**/*", "eslint.config.js"] //NOTE - required to not to show warnings by eslint
+}

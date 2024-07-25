@@ -4,14 +4,8 @@
     "target": "ES6",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "rootDirs": [
-      "./src",
-      "./tests" //NOTE - necessary for not showing warnings inside tests folder
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types" //NOTE - necessary for not showing warnings inside tests folder
-    ],
+    "rootDirs": ["./src"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "resolveJsonModule": true, //NOTE - required to use jest preset with ts
     "allowJs": true, //NOTE - required to use jest preset with ts
     "outDir": "./dist",
@@ -20,7 +14,7 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "tests/**/*"], //NOTE - required to use jest preset with ts
+  "include": ["src/**/*"],
   "exclude": ["node_modules"],
   "ts-node": {
     //NOTE - these options are necessary for fixing the node:internal/process/esm_loader:34
