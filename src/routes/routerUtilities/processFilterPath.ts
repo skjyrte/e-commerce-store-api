@@ -5,7 +5,6 @@ interface filterDataObject {
 }
 
 interface filterPath {
-  query: string | null;
   path: string | null;
 }
 
@@ -20,51 +19,52 @@ interface filterPath {
  * @returns {any} - The processed result (you can replace 'any' with the actual return type).
  */
 
-const processFilterPath = (filterPath: string): filterDataObject | null => {
+/* interface ExpectedQuery {
+  material?: string;
+  season?: string;
+} */
+
+const processFilterPath = (
+  filterPath: string
+  /*   expectedQuery: string */
+): filterDataObject | null => {
   const validateVariants = (filterPath: string): filterPath => {
     //NOTE - Validation contains only basic cases.
     //TODO - Data passed into brand, color, size arrays should be validated in recieving function.
     try {
-      if ((filterPath.match(/\?/g) || []).length > 1) {
-        throw new Error("Invalid input: String contains more than one '?'.");
+      const path = filterPath === "" ? null : filterPath;
+
+      if ((filterPath.match(/__size-/g) || []).length) {
+        if ((filterPath.match(/__size-/g) || []).length > 1) {
+          throw new Error(
+            "Invalid input: Contains more than one '__size-' delimiter."
+          );
+        } else if ((filterPath.match(/_/g) || []).length > 3) {
+          throw new Error(
+            "Invalid input: Contains more than one '_' delimiter."
+          );
+        }
       } else {
-        const pathAndQuery = filterPath.split("?");
-        const path = pathAndQuery[0] === "" ? null : pathAndQuery[0];
-        const query = pathAndQuery[1] === "" ? null : pathAndQuery[1];
-
-        if ((filterPath.match(/__size-/g) || []).length) {
-          if ((filterPath.match(/__size-/g) || []).length > 1) {
-            throw new Error(
-              "Invalid input: Contains more than one '__size-' delimiter."
-            );
-          } else if ((filterPath.match(/_/g) || []).length > 3) {
-            throw new Error(
-              "Invalid input: Contains more than one '_' delimiter."
-            );
-          }
-        } else {
-          if ((filterPath.match(/_/g) || []).length > 1) {
-            throw new Error(
-              "Invalid input: Contains more than one '_' delimiter."
-            );
-          }
+        if ((filterPath.match(/_/g) || []).length > 1) {
+          throw new Error(
+            "Invalid input: Contains more than one '_' delimiter."
+          );
         }
-
-        if (/\.\.+/.test(filterPath)) {
-          throw new Error("Invalid input: Contains consecutive dots.");
-        }
-        return {
-          path: path,
-          query: query,
-        };
       }
+
+      if (/\.\.+/.test(filterPath)) {
+        throw new Error("Invalid input: Contains consecutive dots.");
+      }
+      return {
+        path: path,
+      };
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
       } else {
         console.error("An unknown error occurred");
       }
-      return {path: null, query: null};
+      return {path: null};
     }
   };
 

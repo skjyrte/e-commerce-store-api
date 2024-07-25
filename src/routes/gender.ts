@@ -3,8 +3,8 @@ import pool from "../db.js";
 import processSQLProductBasicData from "./routerUtilities/processSQLProductBasicData.js";
 import createResponse from "./routerUtilities/createResponse.js";
 import {processFilterPath} from "./routerUtilities/processFilterPath.js";
+import {processQueryParams} from "./routerUtilities/processQueryParams.js";
 import {joinSqlQuery} from "./routerUtilities/joinSqlQuery.js";
-import createQueryArray from "./routerUtilities/createQueryArray.js";
 
 const router = express.Router();
 
@@ -79,17 +79,24 @@ router.get("/:gender/category/:category", async (req, res) => {
 router.get("/:gender/category/:category/:variants", async (req, res) => {
   const client = await pool.connect();
   const {gender, category, variants} = req.params;
-  const {material} = req.query;
+  const {material, season} = req.query;
 
   try {
-    const objToCheck = processFilterPath(variants);
-
-    if (!objToCheck) {
+    const parsedPath = processFilterPath(variants);
+    if (!parsedPath) {
       throw new Error("Error during processing filter path");
     }
-    const {brandsArray, colorsArray, sizesArray} = objToCheck;
+    const {brandsArray, colorsArray, sizesArray} = parsedPath;
 
-    const materialsArray = createQueryArray(material);
+    const parsedQuery = processQueryParams({
+      material: material ? material.toString() : material,
+      season: season ? season.toString() : season,
+    });
+    if (!parsedQuery) {
+      throw new Error("Error during processing query params");
+    }
+    const {materialsArray, seasonsArray} = parsedQuery;
+
     const query = `
       SELECT
         products.*,
@@ -110,24 +117,30 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
           AND products.gender = $1 
           AND products.category = $2 `;
 
-    const queryParams: string[] = [gender, category];
+    const sqlParams: string[] = [gender, category];
 
     const dataToExec = [
       {filterArray: sizesArray, filterParameter: "product_stock.size"},
       {filterArray: colorsArray, filterParameter: "products.color"},
       {filterArray: brandsArray, filterParameter: "products.brand"},
       {filterArray: materialsArray, filterParameter: "products.material"},
+      {filterArray: seasonsArray, filterParameter: "products.season"},
     ];
 
-    const override = joinSqlQuery(query, [...queryParams], [...dataToExec]);
+    const updatedSqlConfig = joinSqlQuery(
+      query,
+      [...sqlParams],
+      [...dataToExec]
+    );
 
-    const result = await client.query(override.query, override.queryParams);
+    const fetchedDataDatabase = await client.query(
+      updatedSqlConfig.query,
+      updatedSqlConfig.queryParams
+    );
 
-    if (result.rows.length > 0) {
-      const processedResult = processSQLProductBasicData(result.rows);
-      res
-        .status(200)
-        .send(createResponse(true, "GET Request Called", processedResult));
+    if (fetchedDataDatabase.rows.length > 0) {
+      const result = processSQLProductBasicData(fetchedDataDatabase.rows);
+      res.status(200).send(createResponse(true, "GET Request Called", result));
     } else {
       res.status(404).send(createResponse(false, "Category not found"));
     }

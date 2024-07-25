@@ -7,8 +7,7 @@ import {
 describe("processFilterPath: ", () => {
   //SECTION - test no. 1
   it("Should process SQL rows and return the expected response: GET http://localhost:4000/category/sneakers.", () => {
-    const expectedInput =
-      "Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh";
+    const expectedInput = "Zalton.UrbanStep_red.white.black__size-40.41.46.48";
     const expectedOutput: filterDataObject = {
       brandsArray: ["Zalton", "UrbanStep"],
       colorsArray: ["red", "white", "black"],
@@ -21,28 +20,12 @@ describe("processFilterPath: ", () => {
   });
 
   //SECTION - test no. 2
-  it("EXPECT LOG: Invalid input: String contains more than one '?'.", () => {
-    // eslint-disable-next-line no-empty-function,@typescript-eslint/no-empty-function
-    const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
-
-    processFilterPath(
-      "Zalton.UrbanStep_red.white.black__size-40.41.46.48??material=mesh"
-    );
-
-    expect(errorSpy).toHaveBeenCalled();
-    expect(errorSpy.mock.calls[0][0]).toContain(
-      "Invalid input: String contains more than one '?'."
-    );
-    errorSpy.mockRestore();
-  });
-
-  //SECTION - test no. 3
   it("EXPECT LOG: Invalid input: Contains more than one '__size-' delimiter", () => {
     // eslint-disable-next-line no-empty-function,@typescript-eslint/no-empty-function
     const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
     processFilterPath(
-      "__size-40.41.46.48Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh"
+      "__size-40.41.46.48Zalton.UrbanStep_red.white.black__size-40.41.46.48"
     );
 
     expect(errorSpy).toHaveBeenCalled();
@@ -52,14 +35,12 @@ describe("processFilterPath: ", () => {
     errorSpy.mockRestore();
   });
 
-  //SECTION - test no. 4
+  //SECTION - test no. 3
   it("EXPECT LOG: Invalid input: Contains more than one '_' delimiter - no 1.", () => {
     // eslint-disable-next-line no-empty-function,@typescript-eslint/no-empty-function
     const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    processFilterPath(
-      "Zalton.UrbanStep_re_d_.white.black__size-40.41.46.48?material=mesh"
-    );
+    processFilterPath("Zalton.UrbanStep_re_d_.white.black__size-40.41.46.48");
 
     expect(errorSpy).toHaveBeenCalled();
     expect(errorSpy.mock.calls[0][0]).toContain(
@@ -87,9 +68,7 @@ describe("processFilterPath: ", () => {
     // eslint-disable-next-line no-empty-function,@typescript-eslint/no-empty-function
     const errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
-    processFilterPath(
-      "Zalton.UrbanStep_red..white.black__size-40.41.46.48?material=mesh"
-    );
+    processFilterPath("Zalton.UrbanStep_red..white.black__size-40.41.46.48");
 
     expect(errorSpy).toHaveBeenCalled();
     expect(errorSpy.mock.calls[0][0]).toContain(
