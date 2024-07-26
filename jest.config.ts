@@ -194,6 +194,7 @@ const config: Config = {
   // Whether to use watchman for file crawling
   // watchman: true,
 
+  maxWorkers: 1, //FIXME - to prevent race condition between the async tests.
   verbose: true,
   preset: "ts-jest/presets/js-with-ts-esm", //NOTE - required preset for es6 modules
   testEnvironment: "node",

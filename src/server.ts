@@ -13,6 +13,8 @@ app.use("/product", productRoute);
 app.use("/gender", genderRoute);
 
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`App is running at port: ${PORT}`);
 });
+
+export {app, server};
