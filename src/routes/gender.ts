@@ -1,83 +1,60 @@
 import express from "express";
-import pool from "../db.js";
 import processSQLProductBasicData from "./routerUtilities/processSQLProductBasicData.js";
 import createResponse from "./routerUtilities/createResponse.js";
-import {processFilterPath} from "./routerUtilities/processFilterPath.js";
-import {processQueryParams} from "./routerUtilities/processQueryParams.js";
-import {joinSqlQuery} from "./routerUtilities/joinSqlQuery.js";
+import processFilterPath from "./routerUtilities/processFilterPath.js";
+import processQueryParams from "./routerUtilities/processQueryParams.js";
+import joinSqlQuery from "./routerUtilities/joinSqlQuery.js";
+import executeQuery from "./routerUtilities/executeQuery.js";
 
 const router = express.Router();
 
 router.get("/:gender", async (req, res) => {
-  const client = await pool.connect();
   const {gender} = req.params;
-  try {
-    const result = await client.query(
-      `SELECT 
-        products.*, 
-        product_stock.size, 
-        product_stock.count
-      FROM 
-        products
-      LEFT JOIN 
-        product_stock ON products.id = product_stock.product_id
-      WHERE 
-        products.gender = $1`,
-      [gender]
-    );
-
-    if (result.rows.length > 0) {
-      const processedResult = processSQLProductBasicData(result.rows);
-      res
-        .status(200)
-        .send(createResponse(true, "GET Request Called", processedResult));
-    } else {
-      res.status(404).send(createResponse(false, "Category not found"));
-    }
-  } catch (error) {
-    console.error("Error executing query", error);
-    res.status(500).send(createResponse(false, "Internal server error"));
-  } finally {
-    client.release();
-  }
+  const query = `
+    SELECT 
+      products.*, 
+      product_stock.size, 
+      product_stock.count
+    FROM 
+      products
+    LEFT JOIN 
+      product_stock ON products.id = product_stock.product_id
+    WHERE 
+      products.gender = $1`;
+  await executeQuery(
+    res,
+    query,
+    [gender],
+    "GET Request Called",
+    "Category not found",
+    processSQLProductBasicData
+  );
 });
 
 router.get("/:gender/category/:category", async (req, res) => {
-  const client = await pool.connect();
   const {gender, category} = req.params;
-  try {
-    const result = await client.query(
-      `SELECT 
-        products.*, 
-        product_stock.size, 
-        product_stock.count
-      FROM 
-        products
-      LEFT JOIN 
-        product_stock ON products.id = product_stock.product_id
-      WHERE 
-        products.gender = $1 AND products.category = $2`,
-      [gender, category]
-    );
-
-    if (result.rows.length > 0) {
-      const processedResult = processSQLProductBasicData(result.rows);
-      res
-        .status(200)
-        .send(createResponse(true, "GET Request Called", processedResult));
-    } else {
-      res.status(404).send(createResponse(false, "Category not found"));
-    }
-  } catch (error) {
-    console.error("Error executing query", error);
-    res.status(500).send(createResponse(false, "Internal server error"));
-  } finally {
-    client.release();
-  }
+  const query = `
+    SELECT 
+      products.*, 
+      product_stock.size, 
+      product_stock.count
+    FROM 
+      products
+    LEFT JOIN 
+      product_stock ON products.id = product_stock.product_id
+    WHERE 
+      products.gender = $1 AND products.category = $2`;
+  await executeQuery(
+    res,
+    query,
+    [gender, category],
+    "GET Request Called",
+    "Category not found",
+    processSQLProductBasicData
+  );
 });
 
 router.get("/:gender/category/:category/:variants", async (req, res) => {
-  const client = await pool.connect();
   const {gender, category, variants} = req.params;
   const {material, season} = req.query;
 
@@ -115,7 +92,7 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
         LEFT JOIN product_stock ON products.id = product_stock.product_id
         WHERE 1=1 
           AND products.gender = $1 
-          AND products.category = $2 `;
+          AND products.category = $2`;
 
     const sqlParams: string[] = [gender, category];
 
@@ -133,22 +110,17 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       [...dataToExec]
     );
 
-    const fetchedDataDatabase = await client.query(
+    await executeQuery(
+      res,
       updatedSqlConfig.query,
-      updatedSqlConfig.queryParams
+      updatedSqlConfig.queryParams,
+      "GET Request Called",
+      "Category not found",
+      processSQLProductBasicData
     );
-
-    if (fetchedDataDatabase.rows.length > 0) {
-      const result = processSQLProductBasicData(fetchedDataDatabase.rows);
-      res.status(200).send(createResponse(true, "GET Request Called", result));
-    } else {
-      res.status(404).send(createResponse(false, "Category not found"));
-    }
   } catch (error) {
     console.error("Error executing query", error);
     res.status(500).send(createResponse(false, "Internal server error"));
-  } finally {
-    client.release();
   }
 });
 

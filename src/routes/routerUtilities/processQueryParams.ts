@@ -38,4 +38,4 @@ function processQueryParams(params: QueryParams): queryDataObject {
   };
 }
 
-export {processQueryParams};
+export default processQueryParams;

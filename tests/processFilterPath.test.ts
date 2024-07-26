@@ -1,14 +1,11 @@
 import {describe, expect} from "@jest/globals";
-import {
-  processFilterPath,
-  filterDataObject,
-} from "../src/routes/routerUtilities/processFilterPath";
+import processFilterPath from "../src/routes/routerUtilities/processFilterPath";
 
 describe("processFilterPath: ", () => {
   //SECTION - test no. 1
   it("Should process SQL rows and return the expected response: GET http://localhost:4000/category/sneakers.", () => {
     const expectedInput = "Zalton.UrbanStep_red.white.black__size-40.41.46.48";
-    const expectedOutput: filterDataObject = {
+    const expectedOutput = {
       brandsArray: ["Zalton", "UrbanStep"],
       colorsArray: ["red", "white", "black"],
       sizesArray: ["40", "41", "46", "48"],

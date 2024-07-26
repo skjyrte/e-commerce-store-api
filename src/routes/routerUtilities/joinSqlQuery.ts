@@ -85,4 +85,4 @@ function joinSqlQuery(
   return {query, queryParams};
 }
 
-export {joinSqlQuery, SqlQueryInput};
+export default joinSqlQuery;

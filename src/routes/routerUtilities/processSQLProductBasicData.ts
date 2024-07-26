@@ -80,12 +80,12 @@ const processSQLRows = (
  * @returns An array of ProductBasicDataResponse objects.
  * @throws Will throw an error if the input is not an array of ProductBasicDataDatabase objects.
  */
-export default function processSQLProductBasicData(
-  rows: unknown
-): ProductBasicDataResponse[] {
+function processSQLProductBasicData(rows: unknown): ProductBasicDataResponse[] {
   if (!Array.isArray(rows) || !isProductBasicDataDatabaseArray(rows)) {
     throw new Error(
       "Invalid input: rows must be an array of ProductBasicDataDatabase objects"
     );
   } else return processSQLRows(rows);
 }
+
+export default processSQLProductBasicData;

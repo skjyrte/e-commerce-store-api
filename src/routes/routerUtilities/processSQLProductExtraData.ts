@@ -80,7 +80,7 @@ function processSQLRows(rows: ProductExtraDataDatabase[]) {
  * @returns An array of ProductExtraDataResponse objects.
  * @throws Will throw an error if the input is not an array of ProductExtraDataDatabase objects.
  */
-export default function processSQLProductExtraData(
+function processSQLProductExtraData(
   rows: ProductExtraDataDatabase[]
 ): ProductExtraDataResponse[] {
   if (!Array.isArray(rows) || !isProductExtraDataDatabaseArray(rows)) {
@@ -89,3 +89,5 @@ export default function processSQLProductExtraData(
     );
   } else return processSQLRows(rows);
 }
+
+export default processSQLProductExtraData;

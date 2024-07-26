@@ -1,8 +1,5 @@
 import {describe, expect} from "@jest/globals";
-import {
-  joinSqlQuery,
-  SqlQueryInput,
-} from "../src/routes/routerUtilities/joinSqlQuery";
+import joinSqlQuery from "../src/routes/routerUtilities/joinSqlQuery";
 
 describe("processFilterPath: ", () => {
   it("basic test", () => {
@@ -39,9 +36,7 @@ describe("processFilterPath: ", () => {
 
     const result = joinSqlQuery(baseSql, [...queryParams], [...dataToExec]);
 
-    console.log(result);
-
-    const expectedOutput: SqlQueryInput = {
+    const expectedOutput = {
       query:
         "\n" +
         "    SELECT \n" +

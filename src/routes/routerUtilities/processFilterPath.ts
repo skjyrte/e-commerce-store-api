@@ -100,4 +100,4 @@ function processFilterPath(
   }
 }
 
-export {processFilterPath, filterDataObject};
+export default processFilterPath;
