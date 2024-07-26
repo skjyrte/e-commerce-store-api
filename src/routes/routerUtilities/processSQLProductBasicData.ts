@@ -1,17 +1,21 @@
 import Decimal from "decimal.js";
 
-function isDecimal(obj: unknown): obj is Decimal {
+const isDecimal = (obj: unknown): obj is Decimal => {
   return obj instanceof Decimal;
-}
+};
 
-function isProductBasicDataDatabase(
+const isProductBasicDataDatabaseArray = (
+  arr: unknown[]
+): arr is ProductBasicDataDatabase[] => {
+  return arr.every(isProductBasicDataDatabase);
+};
+
+const isProductBasicDataDatabase = (
   obj: unknown
-): obj is ProductBasicDataDatabase {
+): obj is ProductBasicDataDatabase => {
   if (typeof obj !== "object" || obj === null) return false;
-
   //NOTE - Type casting inside typeguard for clarity
   const o = obj as ProductBasicDataDatabase;
-
   return (
     typeof o.id === "string" &&
     typeof o.brand === "string" &&
@@ -33,59 +37,55 @@ function isProductBasicDataDatabase(
     typeof o.size === "string" &&
     typeof o.count === "number"
   );
-}
+};
 
-function isProductBasicDataDatabaseArray(
-  arr: unknown[]
-): arr is ProductBasicDataDatabase[] {
-  return arr.every(isProductBasicDataDatabase);
-}
+const createCommonDataObject = (
+  products: ProductBasicDataDatabase[]
+): ProductBasicDataResponse => ({
+  id: products[0].id,
+  brand: products[0].brand,
+  model: products[0].model,
+  gender: products[0].gender,
+  category: products[0].category,
+  material: products[0].material,
+  season: products[0].season,
+  short_description: products[0].short_description,
+  description: products[0].description,
+  features: products[0].features,
+  price: products[0].price,
+  initial_price: products[0].initial_price,
+  rating_reviews: products[0].rating_reviews,
+  rating_value: products[0].rating_value,
+  thumbnail: products[0].thumbnail,
+  color: products[0].color,
+  stock_array: Array.from(
+    new Map(
+      products.map((item) => [item.size, {size: item.size, count: item.count}])
+    ).values()
+  ),
+});
 
-function processSQLProductBasicData(rows: unknown): ProductBasicDataResponse[] {
+const processSQLRows = (
+  rows: ProductBasicDataDatabase[]
+): ProductBasicDataResponse[] => {
+  return [...new Set(rows.map((product) => product.id))]
+    .map((uniqueId) => rows.filter((row) => row.id === uniqueId))
+    .map((sortedProducts) => createCommonDataObject(sortedProducts));
+};
+
+/**
+ * Processes an array of raw SQL rows into an array of ProductBasicDataResponse objects.
+ *
+ * @param rows - The raw SQL rows to process.
+ * @returns An array of ProductBasicDataResponse objects.
+ * @throws Will throw an error if the input is not an array of ProductBasicDataDatabase objects.
+ */
+export default function processSQLProductBasicData(
+  rows: unknown
+): ProductBasicDataResponse[] {
   if (!Array.isArray(rows) || !isProductBasicDataDatabaseArray(rows)) {
     throw new Error(
       "Invalid input: rows must be an array of ProductBasicDataDatabase objects"
     );
-  }
-
-  const createCommonDataObject = (
-    products: ProductBasicDataDatabase[]
-  ): ProductBasicDataResponse => ({
-    id: products[0].id,
-    brand: products[0].brand,
-    model: products[0].model,
-    gender: products[0].gender,
-    category: products[0].category,
-    material: products[0].material,
-    season: products[0].season,
-    short_description: products[0].short_description,
-    description: products[0].description,
-    features: products[0].features,
-    price: products[0].price,
-    initial_price: products[0].initial_price,
-    rating_reviews: products[0].rating_reviews,
-    rating_value: products[0].rating_value,
-    thumbnail: products[0].thumbnail,
-    color: products[0].color,
-    stock_array: Array.from(
-      new Map(
-        products.map((item) => [
-          item.size,
-          {size: item.size, count: item.count},
-        ])
-      ).values()
-    ),
-  });
-
-  function processSQLRows(
-    rows: ProductBasicDataDatabase[]
-  ): ProductBasicDataResponse[] {
-    return [...new Set(rows.map((product) => product.id))]
-      .map((uniqueId) => rows.filter((row) => row.id === uniqueId))
-      .map((sortedProducts) => createCommonDataObject(sortedProducts));
-  }
-
-  return processSQLRows(rows);
+  } else return processSQLRows(rows);
 }
-
-export default processSQLProductBasicData;

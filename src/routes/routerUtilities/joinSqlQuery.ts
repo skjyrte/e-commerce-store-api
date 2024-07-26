@@ -59,6 +59,7 @@ function joinSqlQuery(
   let paramIndex = baseParameters.length + 1;
 
   const joinVariants = (queryArray: string[], queryTitle: string) => {
+    //FIXME - NOT PURE FUNCTION
     let subQuery = "";
     queryArray.forEach((q, i) => {
       if (i === 0) {
