@@ -1,5 +1,5 @@
 import express from "express";
-import createResponse from "./createResponse";
+import createResponse from "./createResponse.js";
 
 import pool from "../../db.js";
 
