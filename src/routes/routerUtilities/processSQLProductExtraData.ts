@@ -80,9 +80,7 @@ function processSQLRows(rows: ProductExtraDataDatabase[]) {
  * @returns An array of ProductExtraDataResponse objects.
  * @throws Will throw an error if the input is not an array of ProductExtraDataDatabase objects.
  */
-function processSQLProductExtraData(
-  rows: ProductExtraDataDatabase[]
-): ProductExtraDataResponse[] {
+function processSQLProductExtraData(rows: unknown): ProductExtraDataResponse[] {
   if (!Array.isArray(rows) || !isProductExtraDataDatabaseArray(rows)) {
     throw new Error(
       "Invalid input: rows must be an array of ProductExtraDataDatabase objects"
