@@ -18,8 +18,6 @@ const server = app.listen(PORT, () => {
   console.log(`App is running at port: ${PORT}`);
 });
 
-export {app, server};
-
 const gracefulShutdown = () => {
   console.log("Received shutdown signal, closing HTTP server...");
   server.close(async () => {
@@ -38,3 +36,5 @@ const gracefulShutdown = () => {
 // Listen for termination signals (e.g., from Docker or Kubernetes)
 process.on("SIGTERM", gracefulShutdown);
 process.on("SIGINT", gracefulShutdown);
+
+export {app, server};
