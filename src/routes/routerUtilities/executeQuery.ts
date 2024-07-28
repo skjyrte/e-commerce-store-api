@@ -12,14 +12,10 @@ async function executeQuery(
     rows: unknown
   ) => ProductBasicDataResponse[] | ProductExtraDataResponse[]
 ) {
-  /* const client = await pool.connect(); */
   try {
-    /*  const result = await client.query(query, params); */
     const rows = await query;
-    /*    console.log(rows); */
     if (rows.length > 0) {
       const processedResult = dbProcessor(rows);
-      console.log(processedResult);
       res
         .status(200)
         .send(createResponse(true, successMessage, processedResult));
@@ -30,7 +26,7 @@ async function executeQuery(
     console.error("Error executing query", error);
     res.status(500).send(createResponse(false, "Internal server error"));
   } finally {
-    /* client.release(); */
+    /*   await knexDb.destroy(); */
   }
 }
 

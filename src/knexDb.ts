@@ -6,7 +6,7 @@ import knex from "knex";
 //NOTE - required to parse DECIMAL sql types
 types.setTypeParser(types.builtins.NUMERIC, (val) => new Decimal(val));
 
-const db = knex({
+const knexDb = knex({
   client: "pg",
   debug: true,
   connection: {
@@ -19,13 +19,13 @@ const db = knex({
   },
 });
 
-db.on("error", (err) => {
+knexDb.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);
 });
 
-db.on("connect", () => {
+knexDb.on("connect", () => {
   console.log("Connected to PostgreSQL database");
 });
 
-export default db;
+export default knexDb;
