@@ -1,4 +1,4 @@
-import express from "express";
+/* import express from "express";
 import processSQLProductExtraData from "./routerUtilities/processSQLProductExtraData.js";
 import executeQuery from "./routerUtilities/executeQuery.js";
 
@@ -55,3 +55,4 @@ router.get("/:id", async (req, res) => {
 });
 
 export default router;
+ */
