@@ -29,8 +29,8 @@ router.get("/:gender", async (req, res) => {
       "Category not found",
       processSQLProductBasicData
     );
-  } catch (error) {
-    console.error("Error executing query", error);
+  } catch (e) {
+    console.error("Error on route", e);
     res.status(500).send(createResponse(false, "Internal server error"));
   }
 });
@@ -51,8 +51,8 @@ router.get("/:gender/category/:category", async (req, res) => {
       "Category not found",
       processSQLProductBasicData
     );
-  } catch (error) {
-    console.error("Error executing query", error);
+  } catch (e) {
+    console.error("Error on route", e);
     res.status(500).send(createResponse(false, "Internal server error"));
   }
 });
@@ -129,8 +129,8 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       "Category not found",
       processSQLProductBasicData
     );
-  } catch (error) {
-    console.error("Error executing query", error);
+  } catch (e) {
+    console.error("Error on route", e);
     res.status(500).send(createResponse(false, "Internal server error"));
   }
 });

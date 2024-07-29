@@ -34,12 +34,8 @@ const validateVariants = (filterPath: string): filterPath => {
     return {
       path: path,
     };
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    } else {
-      console.error("An unknown error occurred");
-    }
+  } catch (e) {
+    console.error("Error during input validation", e);
     return {path: null};
   }
 };

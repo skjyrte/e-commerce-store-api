@@ -24,8 +24,8 @@ router.get("/", async (req, res) => {
       "Category not found",
       processSQLProductExtraData
     );
-  } catch (error) {
-    console.error("Error executing query:", error);
+  } catch (e) {
+    console.error("Error on route:", e);
     res.status(500).json({error: "Internal Server Error"});
   }
 });
@@ -52,8 +52,8 @@ router.get("/:id", async (req, res) => {
       "Category not found",
       processSQLProductExtraData
     );
-  } catch (error) {
-    console.error("Error executing query:", error);
+  } catch (e) {
+    console.error("Error on route:", e);
     res.status(500).json({error: "Internal Server Error"});
   }
 });

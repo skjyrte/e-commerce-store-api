@@ -26,7 +26,7 @@ describe("processFilterPath: ", () => {
     );
 
     expect(errorSpy).toHaveBeenCalled();
-    expect(errorSpy.mock.calls[0][0]).toContain(
+    expect(errorSpy.mock.calls[0][1].message).toContain(
       "Invalid input: Contains more than one '__size-' delimiter"
     );
     errorSpy.mockRestore();
@@ -40,7 +40,7 @@ describe("processFilterPath: ", () => {
     processFilterPath("Zalton.UrbanStep_re_d_.white.black__size-40.41.46.48");
 
     expect(errorSpy).toHaveBeenCalled();
-    expect(errorSpy.mock.calls[0][0]).toContain(
+    expect(errorSpy.mock.calls[0][1].message).toContain(
       "Invalid input: Contains more than one '_' delimiter."
     );
     errorSpy.mockRestore();
@@ -54,7 +54,7 @@ describe("processFilterPath: ", () => {
     processFilterPath("Zalton.UrbanStep_re_d_.white.black");
 
     expect(errorSpy).toHaveBeenCalled();
-    expect(errorSpy.mock.calls[0][0]).toContain(
+    expect(errorSpy.mock.calls[0][1].message).toContain(
       "Invalid input: Contains more than one '_' delimiter."
     );
     errorSpy.mockRestore();
@@ -68,7 +68,7 @@ describe("processFilterPath: ", () => {
     processFilterPath("Zalton.UrbanStep_red..white.black__size-40.41.46.48");
 
     expect(errorSpy).toHaveBeenCalled();
-    expect(errorSpy.mock.calls[0][0]).toContain(
+    expect(errorSpy.mock.calls[0][1].message).toContain(
       "Invalid input: Contains consecutive dots."
     );
     errorSpy.mockRestore();

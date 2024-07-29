@@ -13,9 +13,9 @@ const shutdownAfterAll = () => {
     try {
       await knexDb.destroy();
       console.log("Database connection pool closed");
-    } catch (err) {
-      console.error("Error closing database connection pool", err);
-      throw err;
+    } catch (e) {
+      console.error("Error closing database connection pool", e);
+      throw e;
     }
   });
 };

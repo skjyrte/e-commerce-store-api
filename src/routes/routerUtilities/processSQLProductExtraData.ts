@@ -1,18 +1,18 @@
 import Decimal from "decimal.js";
 
-function isDecimal(obj: unknown): obj is Decimal {
+const isDecimal = (obj: unknown): obj is Decimal => {
   return obj instanceof Decimal;
-}
+};
 
-function isProductExtraDataDatabaseArray(
+const isProductExtraDataDatabaseArray = (
   arr: unknown[]
-): arr is ProductExtraDataDatabase[] {
+): arr is ProductExtraDataDatabase[] => {
   return arr.every(isProductExtraDataDatabase);
-}
+};
 
-function isProductExtraDataDatabase(
+const isProductExtraDataDatabase = (
   obj: unknown
-): obj is ProductExtraDataDatabase {
+): obj is ProductExtraDataDatabase => {
   if (typeof obj !== "object" || obj === null) return false;
   //NOTE - Type casting inside typeguard for clarity
   const o = obj as ProductExtraDataDatabase;
@@ -38,7 +38,7 @@ function isProductExtraDataDatabase(
     typeof o.count === "number" &&
     typeof o.image_url === "string"
   );
-}
+};
 
 const createCommonDataObject = (
   products: ProductExtraDataDatabase[]
@@ -67,11 +67,11 @@ const createCommonDataObject = (
   image_url_array: [...new Set(products.map((row) => row.image_url))],
 });
 
-function processSQLRows(rows: ProductExtraDataDatabase[]) {
+const processSQLRows = (rows: ProductExtraDataDatabase[]) => {
   return [...new Set(rows.map((product) => product.id))]
     .map((uniqueId) => rows.filter((row) => row.id === uniqueId))
     .map((sortedProducts) => createCommonDataObject(sortedProducts));
-}
+};
 
 /**
  * Processes an array of raw SQL rows into an array of ProductExtraDataResponse objects.

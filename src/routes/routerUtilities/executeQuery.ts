@@ -22,8 +22,8 @@ async function executeQuery(
     } else {
       res.status(404).send(createResponse(false, notFoundMessage));
     }
-  } catch (error) {
-    console.error("Error executing query", error);
+  } catch (e) {
+    console.error("Error executing query", e);
     res.status(500).send(createResponse(false, "Internal server error"));
   }
 }

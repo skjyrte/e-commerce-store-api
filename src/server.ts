@@ -1,4 +1,4 @@
-import "./config.js"; //import for side effects only
+import "./config.js"; //NOTE - import for side effects only
 import express from "express";
 import cors from "cors";
 import productRoute from "./routes/product.js";
@@ -26,8 +26,8 @@ const gracefulShutdown = () => {
       await knexDb.destroy();
       console.log("Database connection pool closed");
       process.exit(0);
-    } catch (err) {
-      console.error("Error closing database connection pool", err);
+    } catch (e) {
+      console.error("Error closing database connection pool", e);
       process.exit(1);
     }
   });
