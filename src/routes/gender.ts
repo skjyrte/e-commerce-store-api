@@ -5,8 +5,14 @@ import processFilterPath from "./routerUtilities/processFilterPath.js";
 import processQueryParams from "./routerUtilities/processQueryParams.js";
 import executeQuery from "./routerUtilities/executeQuery.js";
 import knexDb from "../knexDb.js";
+import {Knex} from "knex";
 
 const router = express.Router();
+
+interface FilterSet {
+  filterArray: string[];
+  filterParameter: string;
+}
 
 router.get("/:gender", async (req, res) => {
   const {gender} = req.params;
@@ -71,7 +77,7 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
     }
     const {materialsArray, seasonsArray} = parsedQuery;
 
-    const filterSets = [
+    const filterSets: FilterSet[] = [
       {filterArray: sizesArray, filterParameter: "product_stock.size"},
       {filterArray: colorsArray, filterParameter: "products.color"},
       {filterArray: brandsArray, filterParameter: "products.brand"},
@@ -85,31 +91,28 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
       .where("products.gender", gender)
       .andWhere("products.category", category);
 
-    //eslint-disable-next-line
-    const applyFilterSets = (query: any, filterSets: any, index = 0) => {
+    const applyFilterSets = (
+      query: Knex.QueryBuilder,
+      filterSets: FilterSet[],
+      index = 0
+    ) => {
       if (index >= filterSets.length) return query;
       const {filterArray, filterParameter} = filterSets[index];
-      return (
-        query
-          //eslint-disable-next-line
-          .andWhere((builder: any) => {
-            //eslint-disable-next-line
-            builder.where((builder: any) => {
-              //eslint-disable-next-line
-              filterArray.forEach((filterValue: any, index: number) => {
-                if (index === 0) {
-                  builder.where(filterParameter, filterValue);
-                } else {
-                  builder.orWhere(filterParameter, filterValue);
-                }
-              });
+      return query
+        .andWhere((builder: Knex.QueryBuilder) => {
+          builder.where((builder: Knex.QueryBuilder) => {
+            filterArray.forEach((filterValue: string, index: number) => {
+              if (index === 0) {
+                builder.where(filterParameter, filterValue);
+              } else {
+                builder.orWhere(filterParameter, filterValue);
+              }
             });
-          })
-          //eslint-disable-next-line
-          .modify((builder: any) =>
-            applyFilterSets(builder, filterSets, index + 1)
-          )
-      );
+          });
+        })
+        .modify((builder: Knex.QueryBuilder) =>
+          applyFilterSets(builder, filterSets, index + 1)
+        );
     };
 
     const subQueryWithFilters = applyFilterSets(subQuery, filterSets);
