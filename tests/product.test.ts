@@ -1,9 +1,8 @@
 import request from "supertest";
-import {app, server} from "../src/server.js";
+import {app} from "../src/server.js";
+import shutdownAfterAll from "./utilities/shutdownAfterAll.js";
 
-afterAll(() => {
-  server.close();
-});
+shutdownAfterAll();
 
 describe("GET /product", () => {
   it("should return the expected response", async () => {
