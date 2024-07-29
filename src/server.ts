@@ -25,15 +25,14 @@ const gracefulShutdown = () => {
     try {
       await knexDb.destroy();
       console.log("Database connection pool closed");
-      process.exit(0); // Exit the process cleanly
+      process.exit(0);
     } catch (err) {
       console.error("Error closing database connection pool", err);
-      process.exit(1); // Exit with an error code
+      process.exit(1);
     }
   });
 };
 
-// Listen for termination signals (e.g., from Docker or Kubernetes)
 process.on("SIGTERM", gracefulShutdown);
 process.on("SIGINT", gracefulShutdown);
 

@@ -1,25 +1,8 @@
 import request from "supertest";
-import {app, server} from "../src/server.js";
-import knexDb from "../src/knexDb.js";
+import {app} from "../src/server.js";
+import shutdownAfterAll from "./utilities/shutdownAfterAll.js";
 
-afterAll(async () => {
-  // Close the HTTP server
-  await new Promise((resolve) =>
-    server.close(() => {
-      console.log("HTTP server closed");
-      resolve("closed");
-    })
-  );
-
-  // Close the database connection
-  try {
-    await knexDb.destroy();
-    console.log("Database connection pool closed");
-  } catch (err) {
-    console.error("Error closing database connection pool", err);
-    throw err; // Rethrow to ensure Jest recognizes the failure
-  }
-});
+shutdownAfterAll();
 
 describe("GET /product", () => {
   it("should return the expected response", async () => {
