@@ -24,14 +24,8 @@ const isProductBasicDataDatabase = (
     typeof o.category === "string" &&
     typeof o.material === "string" &&
     typeof o.season === "string" &&
-    typeof o.short_description === "string" &&
-    typeof o.description === "string" &&
-    Array.isArray(o.features) &&
-    o.features.every((f: unknown) => typeof f === "string") &&
     isDecimal(o.price) &&
     isDecimal(o.initial_price) &&
-    typeof o.rating_reviews === "number" &&
-    isDecimal(o.rating_value) &&
     typeof o.thumbnail === "string" &&
     typeof o.color === "string" &&
     typeof o.size === "string" &&
@@ -49,13 +43,8 @@ const createCommonDataObject = (
   category: products[0].category,
   material: products[0].material,
   season: products[0].season,
-  short_description: products[0].short_description,
-  description: products[0].description,
-  features: products[0].features,
   price: products[0].price,
   initial_price: products[0].initial_price,
-  rating_reviews: products[0].rating_reviews,
-  rating_value: products[0].rating_value,
   thumbnail: products[0].thumbnail,
   color: products[0].color,
   stock_array: Array.from(

@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
       res,
       query,
       "GET Request Called",
-      "Category not found",
+      "Product not found",
       processSQLProductExtraData
     );
   } catch (e) {
@@ -49,7 +49,7 @@ router.get("/:id", async (req, res) => {
       res,
       query,
       "GET Request Called",
-      "Category not found",
+      "Product not found",
       processSQLProductExtraData
     );
   } catch (e) {

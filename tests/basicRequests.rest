@@ -1,35 +1,41 @@
 ### tests for REST Client for Visual Studio Code
 
+
 ### /* ----------------------------------- DEV ---------------------------------- */
 ### Get all products
 GET http://localhost:4000/product
 
 ### Get product with ID
 GET http://localhost:4000/product/a1524b05-64a6-4d2d-9d6b-6ab57b804923
+GET http://localhost:4000/product/30984c42-37de-4377-8de3-2d16f4897a18
 
-### Get gender-men
-GET http://localhost:4000/gender/men/
+### Get gender
+GET http://localhost:4000/gender/men
+GET http://localhost:4000/gender/women
 
-### Get gender-men, category-sneakers, brand-Zalton or UrbanStep, 
-### color-red or white or black, size-40 or 41 or 46 or 48, material-mesh
+### Get gender, category, brand
+GET http://localhost:4000/gender/men/category/running
+GET http://localhost:4000/gender/men/category/sneakers
+
+### Get gender, category, brand
+GET http://localhost:4000/gender/men/category/sneakers/NeoGrip.SoulFit
+GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep.NeoGrip.SoulFit
+
+### Get gender, category, brand, color
+GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep.NeoGrip.SoulFit_red
+GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep.NeoGrip.SoulFit_red.white.black
+
+### Get gender, category, brand, color, size
+GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-39.40
+GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-39.40.41.42.46.48
+
+### Get gender, category, brand, color, size, material
 GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh
 
-### +Season
+### Get gender, category, brand, color, size, material, season
 GET http://localhost:4000/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh&season=winter
 
+
 ### /* ---------------------------------- PROD ---------------------------------- */
-### Get all products
-GET http://localhost:8080/product
 
-### Get product with ID
-GET http://localhost:8080/product/a1524b05-64a6-4d2d-9d6b-6ab57b804923
-
-### Get gender-men
-GET http://localhost:8080/gender/men/
-
-### Get gender-men, category-sneakers, brand-Zalton or UrbanStep, 
-### color-red or white or black, size-40 or 41 or 46 or 48, material-mesh
-GET http://localhost:8080/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh
-
-### +Season
-GET http://localhost:8080/gender/men/category/sneakers/Zalton.UrbanStep_red.white.black__size-40.41.46.48?material=mesh&season=winter
+### will be updated when needed

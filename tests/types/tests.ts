@@ -11,13 +11,8 @@ export interface ProductBasicDataDatabase {
   category: string;
   material: string;
   season: string;
-  short_description: string;
-  description: string;
-  features: string[];
   price: Decimal;
   initial_price: Decimal;
-  rating_reviews: number;
-  rating_value: Decimal;
   thumbnail: string;
   color: string;
   size: string;
@@ -25,6 +20,11 @@ export interface ProductBasicDataDatabase {
 }
 
 export interface ProductExtraDataDatabase extends ProductBasicDataDatabase {
+  short_description: string;
+  description: string;
+  features: string[];
+  rating_reviews: number;
+  rating_value: Decimal;
   image_url: string;
 }
 
@@ -37,13 +37,8 @@ export interface ProductBasicDataResponse {
   category: string;
   material: string;
   season: string;
-  short_description: string;
-  description: string;
-  features: string[];
   price: Decimal;
   initial_price: Decimal;
-  rating_reviews: number;
-  rating_value: Decimal;
   thumbnail: string;
   color: string;
   stock_array: StockResponse[];
@@ -55,5 +50,10 @@ export interface StockResponse {
 }
 
 export interface ProductExtraDataResponse extends ProductBasicDataResponse {
+  short_description: string;
+  description: string;
+  features: string[];
+  rating_reviews: number;
+  rating_value: Decimal;
   image_url_array: string[];
 }

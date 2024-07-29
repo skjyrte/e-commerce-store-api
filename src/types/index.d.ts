@@ -9,13 +9,8 @@ interface ProductBasicDataDatabase {
   category: string;
   material: string;
   season: string;
-  short_description: string; //TODO - key not necessary for catagory view
-  description: string; //TODO - key not necessary for catagory view
-  features: string[]; //TODO - key not necessary for catagory view
   price: Decimal;
   initial_price: Decimal;
-  rating_reviews: number; //TODO - key not necessary for catagory view
-  rating_value: Decimal; //TODO - key not necessary for catagory view
   thumbnail: string;
   color: string;
   size: string;
@@ -23,6 +18,11 @@ interface ProductBasicDataDatabase {
 }
 
 interface ProductExtraDataDatabase extends ProductBasicDataDatabase {
+  short_description: string;
+  description: string;
+  features: string[];
+  rating_reviews: number;
+  rating_value: Decimal;
   image_url: string;
 }
 
@@ -35,13 +35,8 @@ interface ProductBasicDataResponse {
   category: string;
   material: string;
   season: string;
-  short_description: string; //TODO - key not necessary for catagory view
-  description: string; //TODO - key not necessary for catagory view
-  features: string[]; //TODO - key not necessary for catagory view
   price: Decimal;
   initial_price: Decimal;
-  rating_reviews: number; //TODO - key not necessary for catagory view
-  rating_value: Decimal; //TODO - key not necessary for catagory view
   thumbnail: string;
   color: string;
   stock_array: StockResponse[];
@@ -53,5 +48,10 @@ interface StockResponse {
 }
 
 interface ProductExtraDataResponse extends ProductBasicDataResponse {
+  short_description: string;
+  description: string;
+  features: string[];
+  rating_reviews: number;
+  rating_value: Decimal;
   image_url_array: string[];
 }

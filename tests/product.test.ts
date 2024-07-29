@@ -1,6 +1,6 @@
 import request from "supertest";
 import {app} from "../src/server.js";
-import shutdownAfterAll from "./utilities/shutdownAfterAll.js";
+import shutdownAfterAll from "./shutdownAfterAll.js";
 
 shutdownAfterAll();
 
@@ -374,26 +374,11 @@ describe("GET /product/a1524b05-64a6-4d2d-9d6b-6ab57b804923", () => {
             "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a3e7dead-1ad2-4c40-996d-93ebc9df0fca/buty-meskie-dunk-low-retro-wwlDHh.png",
           color: "white",
           stock_array: [
-            {
-              size: "40",
-              count: 20,
-            },
-            {
-              size: "41",
-              count: 15,
-            },
-            {
-              size: "42",
-              count: 10,
-            },
-            {
-              size: "43",
-              count: 12,
-            },
-            {
-              size: "44",
-              count: 8,
-            },
+            {size: "40", count: 20},
+            {size: "41", count: 15},
+            {size: "42", count: 10},
+            {size: "43", count: 12},
+            {size: "44", count: 8},
           ],
           image_url_array: [
             "https://example.com/image1_1.jpg",
@@ -406,8 +391,75 @@ describe("GET /product/a1524b05-64a6-4d2d-9d6b-6ab57b804923", () => {
     const response = await request(app).get(
       "/product/a1524b05-64a6-4d2d-9d6b-6ab57b804923"
     );
-
     expect(response.status).toBe(200);
+    expect(response.body).toEqual(expectedResponse);
+  });
+});
+
+describe("GET /product/30984c42-37de-4377-8de3-2d16f4897a18", () => {
+  it("should return the expected response", async () => {
+    const expectedResponse = {
+      success: true,
+      message: "GET Request Called",
+      payload: [
+        {
+          id: "30984c42-37de-4377-8de3-2d16f4897a18",
+          brand: "Trekster",
+          model: "Future Rider X1",
+          gender: "men",
+          category: "casual",
+          material: "suede",
+          season: "all_season",
+          short_description: "Retro-Inspired Casual Sneakers",
+          description:
+            "The Trekster Future Rider X1 combines retro style with modern comfort.",
+          features: ["Rider Foam midsole", "Suede and mesh upper"],
+          price: "79.99",
+          initial_price: "89.99",
+          rating_reviews: 60,
+          rating_value: "4.3",
+          thumbnail:
+            "https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/a8254cc4-b776-47b2-898f-7e6e1f564c94/buty-meskie-air-force-1-07-QMx6sn.png",
+          color: "black",
+          stock_array: [
+            {size: "41", count: 20},
+            {size: "42", count: 15},
+            {size: "43", count: 12},
+            {size: "44", count: 8},
+            {size: "45", count: 10},
+          ],
+          image_url_array: [
+            "https://example.com/image3_1.jpg",
+            "https://example.com/image3_2.jpg",
+            "https://example.com/image3_3.jpg",
+          ],
+        },
+      ],
+    };
+    const response = await request(app).get(
+      "/product/30984c42-37de-4377-8de3-2d16f4897a18"
+    );
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(expectedResponse);
+  });
+});
+
+describe("GET /product/a1524b15-64a6-4d2d-9d6b-6ab57b804999", () => {
+  it("should return the expected response", async () => {
+    const expectedResponse = {success: false, message: "Product not found"};
+    const response = await request(app).get(
+      "/product/a1524b05-64a6-4d2d-9d6b-6ab57b804999"
+    );
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual(expectedResponse);
+  });
+});
+
+describe("GET /product/a15", () => {
+  it("should return the expected response", async () => {
+    const expectedResponse = {success: false, message: "Product not found"};
+    const response = await request(app).get("/product/a15");
+    expect(response.status).toBe(404);
     expect(response.body).toEqual(expectedResponse);
   });
 });

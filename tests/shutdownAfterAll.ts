@@ -1,5 +1,5 @@
-import {server} from "../../src/server.js";
-import knexDb from "../../src/knexDb";
+import {server} from "../src/server.js";
+import knexDb from "../src/knexDb.js";
 
 const shutdownAfterAll = () => {
   afterAll(async () => {

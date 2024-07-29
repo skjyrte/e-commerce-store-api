@@ -18,7 +18,21 @@ router.get("/:gender", async (req, res) => {
   const {gender} = req.params;
   try {
     const query = knexDb("products")
-      .select("products.*", "product_stock.size", "product_stock.count")
+      .select(
+        "products.id",
+        "products.brand",
+        "products.model",
+        "products.gender",
+        "products.category",
+        "products.material",
+        "products.season",
+        "products.price",
+        "products.initial_price",
+        "products.thumbnail",
+        "products.color",
+        "product_stock.size",
+        "product_stock.count"
+      )
       .leftJoin("product_stock", "products.id", "product_stock.product_id")
       .where("products.gender", gender);
 
@@ -39,7 +53,21 @@ router.get("/:gender/category/:category", async (req, res) => {
   const {gender, category} = req.params;
   try {
     const query = knexDb("products")
-      .select("products.*", "product_stock.size", "product_stock.count")
+      .select(
+        "products.id",
+        "products.brand",
+        "products.model",
+        "products.gender",
+        "products.category",
+        "products.material",
+        "products.season",
+        "products.price",
+        "products.initial_price",
+        "products.thumbnail",
+        "products.color",
+        "product_stock.size",
+        "product_stock.count"
+      )
       .leftJoin("product_stock", "products.id", "product_stock.product_id")
       .where("products.gender", gender)
       .andWhere("products.category", category);
@@ -118,7 +146,21 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
     const subQueryWithFilters = applyFilterSets(subQuery, filterSets);
 
     const queryWithFilters = knexDb("products")
-      .select("products.*", "product_stock.size", "product_stock.count")
+      .select(
+        "products.id",
+        "products.brand",
+        "products.model",
+        "products.gender",
+        "products.category",
+        "products.material",
+        "products.season",
+        "products.price",
+        "products.initial_price",
+        "products.thumbnail",
+        "products.color",
+        "product_stock.size",
+        "product_stock.count"
+      )
       .leftJoin("product_stock", "products.id", "product_stock.product_id")
       .whereIn("products.id", subQueryWithFilters);
 

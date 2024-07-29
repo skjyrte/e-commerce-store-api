@@ -11,7 +11,7 @@
     "tsndev": "cross-env NODE_ENV=development node --loader ts-node/esm --experimental-specifier-resolution=node ./src/server.ts",
     "build": "tsc",
     "prod": "npm run build && cross-env NODE_ENV=production node ./dist/server.js",
-    "test": "jest --silent=false --detectOpenHandles --forceExit",
+    "test": "cross-env NODE_ENV=development jest --silent=false --detectOpenHandles --forceExit",
     "prepare": "husky"
   },
   "keywords": [],
