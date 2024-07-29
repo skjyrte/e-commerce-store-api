@@ -1,3 +1,9 @@
+interface ResponseObject {
+  success: boolean;
+  message: string;
+  payload?: ProductBasicDataResponse[] | ProductExtraDataResponse[];
+}
+
 /**
  * Creates a standardized response object.
  *
@@ -14,7 +20,7 @@ function createResponse(
   success: boolean,
   message: string,
   payload?: ProductBasicDataResponse[] | ProductExtraDataResponse[]
-) {
+): ResponseObject {
   if (payload === undefined) {
     return {success: success, message: message};
   } else {
