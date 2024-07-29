@@ -1,14 +1,14 @@
 import express from "express";
 import createResponse from "./createResponse.js";
+import {Knex} from "knex";
 
 async function executeQuery(
   res: express.Response,
-  //eslint-disable-next-line
-  query: any,
+  query: Knex.QueryBuilder,
   successMessage: string,
   notFoundMessage: string,
   dbProcessor: (
-    // eslint-disable-next-line no-unused-vars
+    //eslint-disable-next-line no-unused-vars
     rows: unknown
   ) => ProductBasicDataResponse[] | ProductExtraDataResponse[]
 ) {
@@ -25,8 +25,6 @@ async function executeQuery(
   } catch (error) {
     console.error("Error executing query", error);
     res.status(500).send(createResponse(false, "Internal server error"));
-  } finally {
-    /*   await knexDb.destroy(); */
   }
 }
 
