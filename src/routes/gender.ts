@@ -14,7 +14,8 @@ interface FilterSet {
   filterParameter: string;
 }
 
-router.get("/:gender", async (req, res) => {
+//NOTE - optional gender is intended to be used as "ALL" gender on client.
+router.get("/:gender?", async (req, res) => {
   const {gender} = req.params;
   try {
     const query = knexDb("products")
@@ -33,8 +34,11 @@ router.get("/:gender", async (req, res) => {
         "product_stock.size",
         "product_stock.count"
       )
-      .leftJoin("product_stock", "products.id", "product_stock.product_id")
-      .where("products.gender", gender);
+      .leftJoin("product_stock", "products.id", "product_stock.product_id");
+
+    if (gender) {
+      query.where("products.gender", gender);
+    }
 
     await executeQuery(
       res,
@@ -49,7 +53,7 @@ router.get("/:gender", async (req, res) => {
   }
 });
 
-router.get("/:gender/category/:category", async (req, res) => {
+router.get("/:gender?/category/:category", async (req, res) => {
   const {gender, category} = req.params;
   try {
     const query = knexDb("products")
@@ -69,9 +73,11 @@ router.get("/:gender/category/:category", async (req, res) => {
         "product_stock.count"
       )
       .leftJoin("product_stock", "products.id", "product_stock.product_id")
-      .where("products.gender", gender)
-      .andWhere("products.category", category);
+      .where("products.category", category);
 
+    if (gender) {
+      query.andWhere("products.gender", gender);
+    }
     await executeQuery(
       res,
       query,
@@ -85,7 +91,7 @@ router.get("/:gender/category/:category", async (req, res) => {
   }
 });
 
-router.get("/:gender/category/:category/:variants", async (req, res) => {
+router.get("/:gender?/category/:category/:variants", async (req, res) => {
   const {gender, category, variants} = req.params;
   const {material, season} = req.query;
 
@@ -116,8 +122,11 @@ router.get("/:gender/category/:category/:variants", async (req, res) => {
     const subQuery = knexDb("products")
       .select("products.id")
       .leftJoin("product_stock", "products.id", "product_stock.product_id")
-      .where("products.gender", gender)
-      .andWhere("products.category", category);
+      .where("products.category", category);
+
+    if (gender) {
+      subQuery.andWhere("products.gender", gender);
+    }
 
     const applyFilterSets = (
       query: Knex.QueryBuilder,
