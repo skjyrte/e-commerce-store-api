@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 import {Request, Response, NextFunction} from "express";
 import {JwtPayload} from "jsonwebtoken";
-import knexDb from "../knexDb";
+import knexDb from "../knexDb.js";
 import {uuid} from "uuidv4";
 
 interface AuthenticatedRequest extends Request {
