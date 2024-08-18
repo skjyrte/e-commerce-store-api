@@ -14,7 +14,6 @@ async function executeQuery(
 ) {
   try {
     const rows = await query;
-    console.log(rows);
     if (rows.length > 0) {
       const processedResult = dbProcessor(rows);
       res

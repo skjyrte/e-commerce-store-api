@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import productRoute from "./routes/product.js";
 import genderRoute from "./routes/gender.js";
+import authenticationRoute from "./routes/authentication.js";
 import knexDb from "./knexDb.js";
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors());
 
 app.use("/product", productRoute);
 app.use("/gender", genderRoute);
+app.use("/auth", authenticationRoute);
 
 const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
