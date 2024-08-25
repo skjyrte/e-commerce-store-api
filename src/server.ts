@@ -6,10 +6,17 @@ import genderRoute from "./routes/gender.js";
 import authenticationRoute from "./routes/authentication.js";
 import knexDb from "./knexDb.js";
 
+const corsOptions = {
+  origin: process.env.ORIGIN,
+  credentials: true,
+  secure: Boolean(process.env.CONNECTION_SECURE),
+  optionsSuccessStatus: 200,
+};
+
 const app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use("/product", productRoute);
 app.use("/gender", genderRoute);

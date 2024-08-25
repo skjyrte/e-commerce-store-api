@@ -1,7 +1,7 @@
 interface ResponseObject {
   success: boolean;
   message: string;
-  payload?: ProductBasicDataResponse[] | ProductExtraDataResponse[];
+  payload?: unknown;
 }
 
 /**
@@ -13,13 +13,13 @@ interface ResponseObject {
  *
  * @param success - A boolean indicating whether the operation was successful.
  * @param message - A string containing a message about the operation's result.
- * @param payload - An optional array containing the response payload, which can be either ProductBasicDataResponse or ProductExtraDataResponse objects.
+ * @param payload - An optional array containing the response payload, which can be any.
  * @returns An object containing the success status, message, and optionally the payload.
  */
 function createResponse(
   success: boolean,
   message: string,
-  payload?: ProductBasicDataResponse[] | ProductExtraDataResponse[]
+  payload?: unknown
 ): ResponseObject {
   if (payload === undefined) {
     return {success: success, message: message};
