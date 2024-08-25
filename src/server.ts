@@ -13,6 +13,8 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+console.log("COO", corsOptions.origin);
+
 const app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
