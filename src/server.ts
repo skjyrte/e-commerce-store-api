@@ -5,6 +5,7 @@ import productRoute from "./routes/product.js";
 import genderRoute from "./routes/gender.js";
 import authenticationRoute from "./routes/authentication.js";
 import knexDb from "./knexDb.js";
+import cookieParser from "cookie-parser";
 
 const corsOptions = {
   origin: process.env.ORIGIN,
@@ -16,6 +17,7 @@ const corsOptions = {
 console.log("COO", corsOptions.origin);
 
 const app = express();
+app.use(cookieParser());
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cors(corsOptions));
