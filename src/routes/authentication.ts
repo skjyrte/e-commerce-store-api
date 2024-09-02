@@ -111,7 +111,7 @@ router.post("/login", async (req, res) => {
         .cookie("token", token, {
           httpOnly: true,
           secure: Boolean(process.env.CONNECTION_SECURE),
-          sameSite: "strict",
+          sameSite: "none",
           maxAge: 3600000,
         })
         .send(createResponse(true, "Login successful", {...userData}));
