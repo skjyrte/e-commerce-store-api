@@ -13,6 +13,7 @@ interface BasicUserData {
   email: string;
   first_name: string;
   second_name: string;
+  address: string;
 }
 
 interface AuthenticatedRequest extends Request {
@@ -104,6 +105,7 @@ router.post("/login", async (req, res) => {
         email: user.email,
         first_name: user.first_name,
         second_name: user.second_name,
+        address: user.address,
       };
 
       res
@@ -180,6 +182,7 @@ router.get(
         email: user.email,
         first_name: user.first_name,
         second_name: user.second_name,
+        address: user.address,
       };
 
       res
