@@ -124,6 +124,23 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  try {
+    res
+      .status(200)
+      .cookie("token", "", {
+        httpOnly: true,
+        secure: Boolean(process.env.CONNECTION_SECURE),
+        sameSite: "none",
+        expires: new Date(0),
+      })
+      .send(createResponse(true, "Logout successful"));
+  } catch (e) {
+    console.error("Unexpected server error:", e);
+    res.status(500).send(createResponse(false, "Internal server error"));
+  }
+});
+
 const authenticateToken = (
   req: AuthenticatedRequest,
   res: Response,
