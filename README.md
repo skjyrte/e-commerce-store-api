@@ -9,6 +9,7 @@ API for e-commerce shop, built using typescript, express and postgres. It is int
 - Knex.js as a query builder for PostgreSQL.
 - JWT for user authentication.
 - bcrypt for password hashing.
+- docker containers for app and pg db.
 
 **Other features are in progress.**
 
@@ -43,15 +44,29 @@ https://e-commerce-store-api-7iow.onrender.com
    npm run husky
    ```
 
-6. Running the app:
+6. Build postgres db:
 
-   6.1) If you want to run dev server:
+   6.1) If you want to build docker container with dev settings:
+
+   ```bash
+   docker-compose -f compose.dev.yaml --env-file .env.dev up -d
+   ```
+
+   6.2) If you want to build docker container with prod settings:
+
+   ```bash
+   docker-compose -f compose.prod.yaml --env-file .env.prod up --build -d
+   ```
+
+7. Running the app:
+
+   7.1) If you want to run dev server:
 
    ```bash
    npm run nodemondev
    ```
 
-   6.2) If you want to run production server:
+   7.2) If you want to run production server:
 
    ```bash
    npm run prod
