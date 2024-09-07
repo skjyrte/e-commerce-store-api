@@ -12,6 +12,9 @@ API for e-commerce shop, built using typescript, express and postgres. It is int
 
 **Other features are in progress.**
 
+Demo is being currently hosted below:
+https://e-commerce-store-api-7iow.onrender.com
+
 ### Steps
 
 1. Clone the repository:
