@@ -1,0 +1,7 @@
+CREATE TABLE cart (
+  cart_id UUID PRIMARY KEY,
+  user_id UUID,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id)
+);

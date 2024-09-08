@@ -8,7 +8,7 @@ types.setTypeParser(types.builtins.NUMERIC, (val) => new Decimal(val));
 
 const knexDb = knex({
   client: "pg",
-  debug: process.env.NODE_ENV === "development" ? true : false, //NOTE - to be disabled in prod
+  debug: process.env.NODE_ENV === "development" ? false : false, //NOTE - to be disabled in prod
   connection: {
     connectionString: process.env.CONNECTION_STRING, //NOTE - has highest priority. Should be undefined in dev environment.
     host: process.env.HOST,
