@@ -1,11 +1,10 @@
 import express from "express";
-import knexDb from "../knexDb";
-import createResponse from "./routerUtilities/createResponse";
+import knexDb from "../knexDb.js";
+import createResponse from "./routerUtilities/createResponse.js";
 import {uuid} from "uuidv4";
 import jwt from "jsonwebtoken";
+import {JwtPayload, VerifyErrors} from "jsonwebtoken";
 import {Request, Response, NextFunction} from "express";
-import {JwtPayload} from "jsonwebtoken";
-import {VerifyErrors} from "jsonwebtoken";
 
 const router = express.Router();
 
