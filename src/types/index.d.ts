@@ -2,7 +2,7 @@ type Decimal = import("decimal.js").Decimal; //NOTE - necessary syntax for impor
 
 //SECTION - database objects types
 interface ProductBasicDataDatabase {
-  id: string;
+  product_id: string;
   brand: string;
   model: string;
   gender: string;
@@ -28,7 +28,7 @@ interface ProductExtraDataDatabase extends ProductBasicDataDatabase {
 
 //SECTION - data transfer object types
 interface ProductBasicDataResponse {
-  id: string;
+  product_id: string;
   brand: string;
   model: string;
   gender: string;

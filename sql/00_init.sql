@@ -8,4 +8,6 @@
 \i ./05_constraints.sql
 \i ./06_indexes.sql
 \i ./07_seed_data.sql 
+\i ./08_users_table.sql
+\i ./09_cart.sql
  */

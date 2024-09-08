@@ -9,7 +9,7 @@ import createResponse from "./routerUtilities/createResponse.js";
 import {VerifyErrors} from "jsonwebtoken";
 
 interface BasicUserData {
-  id: string;
+  user_id: string;
   email: string;
   first_name: string;
   second_name: string;
@@ -17,7 +17,7 @@ interface BasicUserData {
 }
 
 interface AuthenticatedRequest extends Request {
-  id?: string;
+  user_id?: string;
 }
 
 const router = express.Router();
@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
 
   try {
     const query = await knexDb("users")
-      .select("users.id", "users.email")
+      .select("users.user_id", "users.email")
       .where("users.email", email);
 
     if (query.length > 0) {
@@ -44,7 +44,7 @@ router.post("/register", async (req, res) => {
       }
 
       await knexDb("users").insert({
-        id: uuid(),
+        user_id: uuid(),
         email: email,
         password: hash,
         first_name: first_name,
@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
   try {
     const query = await knexDb("users")
       .select(
-        "users.id",
+        "users.user_id",
         "users.email",
         "users.password",
         "users.first_name",
@@ -96,12 +96,12 @@ router.post("/login", async (req, res) => {
 
       if (!process.env.JWT_SECRET) throw new Error("Secret not defined");
 
-      const token = jwt.sign({id: user.id}, process.env.JWT_SECRET, {
+      const token = jwt.sign({user_id: user.user_id}, process.env.JWT_SECRET, {
         expiresIn: "1h",
       });
 
       const userData: BasicUserData = {
-        id: user.id,
+        user_id: user.user_id,
         email: user.email,
         first_name: user.first_name,
         second_name: user.second_name,
@@ -164,8 +164,9 @@ const authenticateToken = (
       if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
         throw new Error("Invalid jwt payload");
       //NOTE - i assume we dont need token details right now
-      if (!jwtPayload.id) throw new Error("User ID in the token is invalid");
-      req.id = jwtPayload.id;
+      if (!jwtPayload.user_id)
+        throw new Error("User user_id in the token is invalid");
+      req.user_id = jwtPayload.user_id;
       next();
     }
   );
@@ -178,14 +179,14 @@ router.get(
     try {
       const query = await knexDb("users")
         .select(
-          "users.id",
+          "users.user_id",
           "users.email",
           "users.password",
           "users.first_name",
           "users.second_name",
           "users.address"
         )
-        .where("users.id", req.id);
+        .where("users.user_id", req.user_id);
 
       if (query.length !== 1) {
         return res
@@ -195,7 +196,7 @@ router.get(
       const user = query[0];
 
       const userData: BasicUserData = {
-        id: user.id,
+        user_id: user.user_id,
         email: user.email,
         first_name: user.first_name,
         second_name: user.second_name,
@@ -216,7 +217,7 @@ router.get(
   "/protected",
   authenticateToken,
   (req: AuthenticatedRequest, res: Response) => {
-    res.json({message: "Protected route", id: req.id});
+    res.json({message: "Protected route", user_id: req.user_id});
   }
 );
 

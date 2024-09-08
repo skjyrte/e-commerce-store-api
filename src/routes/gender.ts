@@ -20,7 +20,7 @@ router.get("/:gender?", async (req, res) => {
   try {
     const query = knexDb("products")
       .select(
-        "products.id",
+        "products.product_id",
         "products.brand",
         "products.model",
         "products.gender",
@@ -34,7 +34,11 @@ router.get("/:gender?", async (req, res) => {
         "product_stock.size",
         "product_stock.count"
       )
-      .leftJoin("product_stock", "products.id", "product_stock.product_id");
+      .leftJoin(
+        "product_stock",
+        "products.product_id",
+        "product_stock.product_id"
+      );
 
     if (gender) {
       query.where("products.gender", gender);
@@ -58,7 +62,7 @@ router.get("/:gender?/category/:category", async (req, res) => {
   try {
     const query = knexDb("products")
       .select(
-        "products.id",
+        "products.product_id",
         "products.brand",
         "products.model",
         "products.gender",
@@ -72,7 +76,11 @@ router.get("/:gender?/category/:category", async (req, res) => {
         "product_stock.size",
         "product_stock.count"
       )
-      .leftJoin("product_stock", "products.id", "product_stock.product_id")
+      .leftJoin(
+        "product_stock",
+        "products.product_id",
+        "product_stock.product_id"
+      )
       .where("products.category", category);
 
     if (gender) {
@@ -120,8 +128,12 @@ router.get("/:gender?/category/:category/:variants", async (req, res) => {
     ];
 
     const subQuery = knexDb("products")
-      .select("products.id")
-      .leftJoin("product_stock", "products.id", "product_stock.product_id")
+      .select("products.product_id")
+      .leftJoin(
+        "product_stock",
+        "products.product_id",
+        "product_stock.product_id"
+      )
       .where("products.category", category);
 
     if (gender) {
@@ -156,7 +168,7 @@ router.get("/:gender?/category/:category/:variants", async (req, res) => {
 
     const queryWithFilters = knexDb("products")
       .select(
-        "products.id",
+        "products.product_id",
         "products.brand",
         "products.model",
         "products.gender",
@@ -170,8 +182,12 @@ router.get("/:gender?/category/:category/:variants", async (req, res) => {
         "product_stock.size",
         "product_stock.count"
       )
-      .leftJoin("product_stock", "products.id", "product_stock.product_id")
-      .whereIn("products.id", subQueryWithFilters);
+      .leftJoin(
+        "product_stock",
+        "products.product_id",
+        "product_stock.product_id"
+      )
+      .whereIn("products.product_id", subQueryWithFilters);
 
     await executeQuery(
       res,

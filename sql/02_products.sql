@@ -1,5 +1,5 @@
 CREATE TABLE products (
-    id UUID PRIMARY KEY,
+    product_id UUID PRIMARY KEY,
     brand VARCHAR(50),
     model VARCHAR(100),
     gender gender_type,

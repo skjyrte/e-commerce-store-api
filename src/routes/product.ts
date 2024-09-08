@@ -13,8 +13,16 @@ router.get("/", async (req, res) => {
       "product_stock.count",
       "product_images.image_url"
     )
-    .leftJoin("product_stock", "products.id", "product_stock.product_id")
-    .leftJoin("product_images", "products.id", "product_images.product_id");
+    .leftJoin(
+      "product_stock",
+      "products.product_id",
+      "product_stock.product_id"
+    )
+    .leftJoin(
+      "product_images",
+      "products.product_id",
+      "product_images.product_id"
+    );
 
   try {
     await executeQuery(
@@ -30,8 +38,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
-  const {id} = req.params;
+router.get("/:product_id", async (req, res) => {
+  const {product_id} = req.params;
 
   const query = knexDb("products")
     .select(
@@ -40,9 +48,17 @@ router.get("/:id", async (req, res) => {
       "product_stock.count",
       "product_images.image_url"
     )
-    .leftJoin("product_stock", "products.id", "product_stock.product_id")
-    .leftJoin("product_images", "products.id", "product_images.product_id")
-    .where("products.id", id);
+    .leftJoin(
+      "product_stock",
+      "products.product_id",
+      "product_stock.product_id"
+    )
+    .leftJoin(
+      "product_images",
+      "products.product_id",
+      "product_images.product_id"
+    )
+    .where("products.product_id", product_id);
 
   try {
     await executeQuery(

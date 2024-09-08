@@ -17,7 +17,7 @@ const isProductExtraDataDatabase = (
   //NOTE - Type casting inside typeguard for clarity
   const o = obj as ProductExtraDataDatabase;
   return (
-    typeof o.id === "string" &&
+    typeof o.product_id === "string" &&
     typeof o.brand === "string" &&
     typeof o.model === "string" &&
     typeof o.gender === "string" &&
@@ -43,7 +43,7 @@ const isProductExtraDataDatabase = (
 const createCommonDataObject = (
   products: ProductExtraDataDatabase[]
 ): ProductExtraDataResponse => ({
-  id: products[0].id,
+  product_id: products[0].product_id,
   brand: products[0].brand,
   model: products[0].model,
   gender: products[0].gender,
@@ -68,8 +68,8 @@ const createCommonDataObject = (
 });
 
 const processSQLRows = (rows: ProductExtraDataDatabase[]) => {
-  return [...new Set(rows.map((product) => product.id))]
-    .map((uniqueId) => rows.filter((row) => row.id === uniqueId))
+  return [...new Set(rows.map((product) => product.product_id))]
+    .map((uniqueId) => rows.filter((row) => row.product_id === uniqueId))
     .map((sortedProducts) => createCommonDataObject(sortedProducts));
 };
 

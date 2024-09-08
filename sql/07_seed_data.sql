@@ -1,5 +1,5 @@
 -- Seed data for products table
-INSERT INTO products (id, brand, model, gender, category, material, season, short_description, description, features, price, initial_price, rating_reviews, rating_value, thumbnail, color)
+INSERT INTO products (product_id, brand, model, gender, category, material, season, short_description, description, features, price, initial_price, rating_reviews, rating_value, thumbnail, color)
 VALUES
 -- Product 1
 ('a1524b05-64a6-4d2d-9d6b-6ab57b804923', 'Zalton', 'AirFlex 5000', 'men', 'sneakers', 'mesh', 'all_season', 'Versatile Running Shoes', 'The Zalton AirFlex 5000 delivers the same responsive cushioning that runners love.', ARRAY['Responsive cushioning', 'Breathable mesh upper'], 129.99, 149.99, 120, 4.5, 'https://static.nike.com/a/images/c_limit,w_592,f_auto/t_product_v1/e3cc2305-65bb-4824-b4bd-9474386f6656/buty-p-6000-N11cGn.png', 'white'),
