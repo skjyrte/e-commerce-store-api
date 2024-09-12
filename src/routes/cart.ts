@@ -9,7 +9,6 @@ import {Request, Response, NextFunction} from "express";
 const router = express.Router();
 
 interface CartDatabase {
-  cart_id: string;
   user_id: string;
   product_id: string;
   product_size: string;
@@ -59,33 +58,29 @@ const authenticateToken = (
   );
 };
 
-router.get("/cart", authenticateToken, async (req, res) => {
-  const {user_id} = req.body;
+router.get(
+  "/cart",
+  authenticateToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    const user_id = req.user_id;
 
-  try {
-    if (!user_id) throw new Error("Invalid user ID");
+    try {
+      if (!user_id) throw new Error("Invalid user ID");
 
-    const cart_id = (
-      (await knexDb("cart").where("cart.user_id", user_id).first()) as
-        | CartDatabase
-        | undefined
-    )?.cart_id;
-
-    if (cart_id) {
       const cartItems = (await knexDb("cart_items").where(
-        "cart_items.cart_id",
-        cart_id
+        "cart_items.user_id",
+        user_id
       )) as CartDatabase[] | [];
 
       res
         .status(200)
         .send(createResponse(true, "Fetching cart data", cartItems));
+    } catch (err) {
+      console.error(err);
+      res.status(500).send(createResponse(false, "Server error"));
     }
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(createResponse(false, "Server error"));
   }
-});
+);
 
 router.post("/add", authenticateToken, async (req, res) => {
   const {user_id, product_id, product_size, cart_quantity} = req.body;
@@ -103,47 +98,22 @@ router.post("/add", authenticateToken, async (req, res) => {
     if (itemStock.count < cart_quantity)
       throw new Error("User reqests more product count than is in database");
 
-    const cart_id = (
-      (await knexDb("cart").where("cart.user_id", user_id).first()) as
-        | CartDatabase
-        | undefined
-    )?.cart_id;
+    const existingItem = (await knexDb("cart_items")
+      .where("cart_items.user_id", user_id)
+      .andWhere("cart_items.product_id", product_id)
+      .andWhere("cart_items.product_size", product_size)
+      .first()) as CartDatabase | undefined;
 
-    if (cart_id) {
-      const existingItem = (await knexDb("cart_items")
-        .where("cart_items.cart_id", cart_id)
+    if (existingItem) {
+      await knexDb("cart_items")
+        .where("cart_items.user_id", user_id)
         .andWhere("cart_items.product_id", product_id)
         .andWhere("cart_items.product_size", product_size)
-        .first()) as CartDatabase | undefined;
-
-      if (existingItem) {
-        await knexDb("cart_items")
-          .where("cart_items.cart_id", cart_id)
-          .andWhere("cart_items.product_id", product_id)
-          .andWhere("cart_items.product_size", product_size)
-          .update({cart_quantity: cart_quantity});
-      } else {
-        await knexDb("cart_items").insert({
-          cart_item_id: uuid(),
-          cart_id: cart_id,
-          product_id,
-          product_size,
-          cart_quantity,
-          created_at: knexDb.fn.now(),
-          updated_at: knexDb.fn.now(),
-        });
-      }
+        .update({cart_quantity: cart_quantity});
     } else {
-      const cart_id = uuid();
-      await knexDb("cart").insert({
-        cart_id: cart_id,
-        user_id,
-        created_at: knexDb.fn.now(),
-        updated_at: knexDb.fn.now(),
-      });
       await knexDb("cart_items").insert({
-        cart_item: uuid(),
-        cart_id,
+        cart_item_id: uuid(),
+        user_id: user_id,
         product_id,
         product_size,
         cart_quantity,
@@ -151,6 +121,7 @@ router.post("/add", authenticateToken, async (req, res) => {
         updated_at: knexDb.fn.now(),
       });
     }
+
     res.status(200).send(
       createResponse(true, "Item added to cart", {
         user_id,

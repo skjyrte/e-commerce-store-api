@@ -1,0 +1,6 @@
+CREATE TABLE guest_users (
+  user_id UUID PRIMARY KEY,
+  token VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP
+);

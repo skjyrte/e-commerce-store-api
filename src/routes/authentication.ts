@@ -10,10 +10,16 @@ import {VerifyErrors} from "jsonwebtoken";
 
 interface BasicUserData {
   user_id: string;
+  guest: false;
   email: string;
   first_name: string;
   second_name: string;
   address: string;
+}
+
+interface GuestUserData {
+  user_id: string;
+  guest: true;
 }
 
 interface AuthenticatedRequest extends Request {
@@ -102,6 +108,7 @@ router.post("/login", async (req, res) => {
 
       const userData: BasicUserData = {
         user_id: user.user_id,
+        guest: false,
         email: user.email,
         first_name: user.first_name,
         second_name: user.second_name,
@@ -126,6 +133,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/logout", (req, res) => {
   try {
+    console.log("LOGIN");
     res
       .status(200)
       .cookie("token", "", {
@@ -167,13 +175,46 @@ const authenticateToken = (
       if (!jwtPayload.user_id)
         throw new Error("User user_id in the token is invalid");
       req.user_id = jwtPayload.user_id;
+      console.log(req.user_id);
+      next();
+    }
+  );
+};
+
+const authenticateGuestToken = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const guestToken = req.cookies.guestToken;
+
+  if (!guestToken) {
+    return res.status(401).send(createResponse(false, "Invalid guestToken"));
+  }
+
+  jwt.verify(
+    guestToken,
+    process.env.JWT_SECRET as string,
+    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
+      if (err)
+        return res
+          .status(403)
+          .send(createResponse(false, "Invalid credentials"));
+
+      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
+        throw new Error("Invalid jwt payload");
+      //NOTE - i assume we dont need guestToken details right now
+      if (!jwtPayload.user_id)
+        throw new Error("User user_id in the guestToken is invalid");
+      req.user_id = jwtPayload.user_id;
+      console.log(req.user_id);
       next();
     }
   );
 };
 
 router.get(
-  "/check-session",
+  "/validate-user-token",
   authenticateToken,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
@@ -197,6 +238,7 @@ router.get(
 
       const userData: BasicUserData = {
         user_id: user.user_id,
+        guest: false,
         email: user.email,
         first_name: user.first_name,
         second_name: user.second_name,
@@ -220,5 +262,86 @@ router.get(
     res.json({message: "Protected route", user_id: req.user_id});
   }
 );
+
+router.get(
+  "/validate-guest-token",
+  authenticateGuestToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      console.log(req.user_id);
+      const query = await knexDb("guest_users")
+        .select("guest_users.user_id")
+        .where("guest_users.user_id", req.user_id);
+
+      console.log(query);
+
+      if (query.length !== 1) {
+        return res
+          .status(400)
+          .send(createResponse(false, "Invalid credentials"));
+      }
+      const user = query[0];
+
+      const userData: GuestUserData = {
+        user_id: user.user_id,
+        guest: true,
+      };
+
+      res
+        .status(200)
+        .send(createResponse(true, "Guest user token is valid", {...userData}));
+    } catch (e) {
+      console.error("Unexpected server error:", e);
+      res.status(500).send(createResponse(false, "Internal server error"));
+    }
+  }
+);
+
+router.post("/register-guest-token", async (req, res) => {
+  try {
+    if (!process.env.JWT_SECRET) throw new Error("Secret not defined");
+    const user_id = uuid();
+
+    const token = jwt.sign({user_id}, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
+    const saltRounds = 10;
+    bcrypt.hash(token, saltRounds, async function (err, hash) {
+      if (err) {
+        console.error("Error hashing token:", err);
+        return res
+          .status(500)
+          .send(createResponse(false, "Internal server error"));
+      }
+
+      await knexDb("guest_users").insert({
+        user_id: user_id,
+        token: hash,
+      });
+
+      const userData: GuestUserData = {
+        user_id: user_id,
+        guest: true,
+      };
+
+      res
+        .status(200)
+        .cookie("guestToken", token, {
+          httpOnly: true,
+          secure: Boolean(process.env.CONNECTION_SECURE),
+          sameSite: "none",
+          maxAge: 2592000000,
+        })
+        .send(
+          createResponse(true, "Guest user token registered successfully", {
+            ...userData,
+          })
+        );
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
 
 export default router;
