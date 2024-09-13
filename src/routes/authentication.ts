@@ -28,6 +28,70 @@ interface AuthenticatedRequest extends Request {
 
 const router = express.Router();
 
+const authenticateToken = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).send(createResponse(false, "Invalid token"));
+  }
+
+  jwt.verify(
+    token,
+    process.env.JWT_SECRET as string,
+    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
+      if (err)
+        return res
+          .status(403)
+          .send(createResponse(false, "Invalid credentials"));
+
+      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
+        throw new Error("Invalid jwt payload");
+      //NOTE - i assume we dont need token details right now
+      if (!jwtPayload.user_id)
+        throw new Error("User user_id in the token is invalid");
+      req.user_id = jwtPayload.user_id;
+      console.log(req.user_id);
+      next();
+    }
+  );
+};
+
+const authenticateGuestToken = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const guestToken = req.cookies.guestToken;
+
+  if (!guestToken) {
+    return res.status(401).send(createResponse(false, "Invalid guestToken"));
+  }
+
+  jwt.verify(
+    guestToken,
+    process.env.JWT_SECRET as string,
+    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
+      if (err)
+        return res
+          .status(403)
+          .send(createResponse(false, "Invalid credentials"));
+
+      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
+        throw new Error("Invalid jwt payload");
+      //NOTE - i assume we dont need guestToken details right now
+      if (!jwtPayload.user_id)
+        throw new Error("User user_id in the guestToken is invalid");
+      req.user_id = jwtPayload.user_id;
+      console.log(req.user_id);
+      next();
+    }
+  );
+};
+
 router.post("/register", async (req, res) => {
   const {email, password, first_name, second_name, address} = req.body;
 
@@ -131,87 +195,53 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/logout", (req, res) => {
-  try {
-    console.log("LOGIN");
-    res
-      .status(200)
-      .cookie("token", "", {
-        httpOnly: true,
-        secure: Boolean(process.env.CONNECTION_SECURE),
-        sameSite: "none",
-        expires: new Date(0),
-      })
-      .send(createResponse(true, "Logout successful"));
-  } catch (e) {
-    console.error("Unexpected server error:", e);
-    res.status(500).send(createResponse(false, "Internal server error"));
-  }
-});
+router.post(
+  "/logout",
+  authenticateGuestToken,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      //NOTE - remove guest user data if present
+      if (
+        await knexDb("guest_users")
+          .where("guest_users.user_id", req.user_id)
+          .first()
+      ) {
+        await knexDb("guest_users")
+          .where("guest_users.user_id", req.user_id)
+          .del();
+      }
+      //NOTE - remove guest cart data if present
+      if (
+        await knexDb("guest_cart_items")
+          .where("guest_cart_items.user_id", req.user_id)
+          .first()
+      ) {
+        await knexDb("guest_cart_items")
+          .where("guest_cart_items.user_id", req.user_id)
+          .del();
+      }
 
-const authenticateToken = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).send(createResponse(false, "Invalid token"));
-  }
-
-  jwt.verify(
-    token,
-    process.env.JWT_SECRET as string,
-    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
-      if (err)
-        return res
-          .status(403)
-          .send(createResponse(false, "Invalid credentials"));
-
-      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
-        throw new Error("Invalid jwt payload");
-      //NOTE - i assume we dont need token details right now
-      if (!jwtPayload.user_id)
-        throw new Error("User user_id in the token is invalid");
-      req.user_id = jwtPayload.user_id;
-      console.log(req.user_id);
-      next();
+      res
+        .status(200)
+        .cookie("token", "", {
+          httpOnly: true,
+          secure: Boolean(process.env.CONNECTION_SECURE),
+          sameSite: "none",
+          expires: new Date(0),
+        })
+        .cookie("guestToken", "", {
+          httpOnly: true,
+          secure: Boolean(process.env.CONNECTION_SECURE),
+          sameSite: "none",
+          expires: new Date(0),
+        })
+        .send(createResponse(true, "Logout successful"));
+    } catch (e) {
+      console.error("Unexpected server error:", e);
+      res.status(500).send(createResponse(false, "Internal server error"));
     }
-  );
-};
-
-const authenticateGuestToken = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const guestToken = req.cookies.guestToken;
-
-  if (!guestToken) {
-    return res.status(401).send(createResponse(false, "Invalid guestToken"));
   }
-
-  jwt.verify(
-    guestToken,
-    process.env.JWT_SECRET as string,
-    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
-      if (err)
-        return res
-          .status(403)
-          .send(createResponse(false, "Invalid credentials"));
-
-      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
-        throw new Error("Invalid jwt payload");
-      //NOTE - i assume we dont need guestToken details right now
-      if (!jwtPayload.user_id)
-        throw new Error("User user_id in the guestToken is invalid");
-      req.user_id = jwtPayload.user_id;
-      console.log(req.user_id);
-      next();
-    }
-  );
-};
+);
 
 router.get(
   "/validate-user-token",
