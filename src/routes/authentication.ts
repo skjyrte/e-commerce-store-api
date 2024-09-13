@@ -54,7 +54,6 @@ const authenticateToken = (
       if (!jwtPayload.user_id)
         throw new Error("User user_id in the token is invalid");
       req.user_id = jwtPayload.user_id;
-      console.log(req.user_id);
       next();
     }
   );
@@ -86,7 +85,6 @@ const authenticateGuestToken = (
       if (!jwtPayload.user_id)
         throw new Error("User user_id in the guestToken is invalid");
       req.user_id = jwtPayload.user_id;
-      console.log(req.user_id);
       next();
     }
   );
@@ -298,12 +296,9 @@ router.get(
   authenticateGuestToken,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      console.log(req.user_id);
       const query = await knexDb("guest_users")
         .select("guest_users.user_id")
         .where("guest_users.user_id", req.user_id);
-
-      console.log(query);
 
       if (query.length !== 1) {
         return res
