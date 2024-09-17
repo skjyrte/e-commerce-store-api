@@ -28,66 +28,45 @@ interface AuthenticatedRequest extends Request {
 
 const router = express.Router();
 
-const authenticateToken = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const token = req.cookies.token;
+const authenticateToken = (guest: boolean) => {
+  //NOTE - middleware for auth route
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const token = guest ? req.cookies.guestToken : req.cookies.token;
+    const cookieName = guest ? "guestToken" : "token";
 
-  if (!token) {
-    return res.status(401).send(createResponse(false, "Invalid token"));
-  }
-
-  jwt.verify(
-    token,
-    process.env.JWT_SECRET as string,
-    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
-      if (err)
-        return res
-          .status(403)
-          .send(createResponse(false, "Invalid credentials"));
-
-      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
-        throw new Error("Invalid jwt payload");
-      //NOTE - i assume we dont need token details right now
-      if (!jwtPayload.user_id)
-        throw new Error("User user_id in the token is invalid");
-      req.user_id = jwtPayload.user_id;
-      next();
+    if (!token) {
+      return res.status(401).send(createResponse(false, "Invalid token"));
     }
-  );
-};
 
-const authenticateGuestToken = (
-  req: AuthenticatedRequest,
-  res: Response,
-  next: NextFunction
-) => {
-  const guestToken = req.cookies.guestToken;
+    jwt.verify(
+      token,
+      process.env.JWT_SECRET as string,
+      (
+        err: VerifyErrors | null,
+        jwtPayload: string | JwtPayload | undefined
+      ) => {
+        if (err)
+          return res
+            .cookie(cookieName, "", {
+              httpOnly: true,
+              secure: Boolean(process.env.CONNECTION_SECURE),
+              sameSite: "none",
+              expires: new Date(0),
+            })
+            .status(403)
+            .send(createResponse(false, "Invalid credentials"));
 
-  if (!guestToken) {
-    return res.status(401).send(createResponse(false, "Invalid guestToken"));
-  }
+        if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
+          throw new Error("Invalid jwt payload");
 
-  jwt.verify(
-    guestToken,
-    process.env.JWT_SECRET as string,
-    (err: VerifyErrors | null, jwtPayload: string | JwtPayload | undefined) => {
-      if (err)
-        return res
-          .status(403)
-          .send(createResponse(false, "Invalid credentials"));
+        if (!jwtPayload.user_id)
+          throw new Error("User ID in the token is invalid");
 
-      if (typeof jwtPayload === "undefined" || typeof jwtPayload === "string")
-        throw new Error("Invalid jwt payload");
-      //NOTE - i assume we dont need guestToken details right now
-      if (!jwtPayload.user_id)
-        throw new Error("User user_id in the guestToken is invalid");
-      req.user_id = jwtPayload.user_id;
-      next();
-    }
-  );
+        req.user_id = jwtPayload.user_id;
+        next();
+      }
+    );
+  };
 };
 
 router.post("/register", async (req, res) => {
@@ -123,6 +102,53 @@ router.post("/register", async (req, res) => {
       res
         .status(201)
         .send(createResponse(true, "User registered successfully"));
+    });
+  } catch (e) {
+    console.error(e);
+  }
+});
+
+router.post("/register-guest-token", async (req, res) => {
+  try {
+    if (!process.env.JWT_SECRET) throw new Error("Secret not defined");
+    const user_id = uuid();
+
+    const token = jwt.sign({user_id}, process.env.JWT_SECRET, {
+      expiresIn: "30d",
+    });
+
+    const saltRounds = 10;
+    bcrypt.hash(token, saltRounds, async function (err, hash) {
+      if (err) {
+        console.error("Error hashing token:", err);
+        return res
+          .status(500)
+          .send(createResponse(false, "Internal server error"));
+      }
+
+      await knexDb("guest_users").insert({
+        user_id: user_id,
+        token: hash,
+      });
+
+      const userData: GuestUserData = {
+        user_id: user_id,
+        guest: true,
+      };
+
+      res
+        .status(200)
+        .cookie("guestToken", token, {
+          httpOnly: true,
+          secure: Boolean(process.env.CONNECTION_SECURE),
+          sameSite: "none",
+          maxAge: 2592000000,
+        })
+        .send(
+          createResponse(true, "Guest user token registered successfully", {
+            ...userData,
+          })
+        );
     });
   } catch (e) {
     console.error(e);
@@ -193,9 +219,82 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get(
+  "/validate-user-token",
+  authenticateToken(false),
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const query = await knexDb("users")
+        .select(
+          "users.user_id",
+          "users.email",
+          "users.password",
+          "users.first_name",
+          "users.second_name",
+          "users.address"
+        )
+        .where("users.user_id", req.user_id);
+
+      if (query.length !== 1) {
+        return res
+          .status(400)
+          .send(createResponse(false, "Invalid credentials"));
+      }
+      const user = query[0];
+
+      const userData: BasicUserData = {
+        user_id: user.user_id,
+        guest: false,
+        email: user.email,
+        first_name: user.first_name,
+        second_name: user.second_name,
+        address: user.address,
+      };
+
+      res
+        .status(200)
+        .send(createResponse(true, "User token is valid", {...userData}));
+    } catch (e) {
+      console.error("Unexpected server error:", e);
+      res.status(500).send(createResponse(false, "Internal server error"));
+    }
+  }
+);
+
+router.get(
+  "/validate-guest-token",
+  authenticateToken(true),
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const query = await knexDb("guest_users")
+        .select("guest_users.user_id")
+        .where("guest_users.user_id", req.user_id);
+
+      if (query.length !== 1) {
+        return res
+          .status(400)
+          .send(createResponse(false, "Invalid credentials"));
+      }
+      const user = query[0];
+
+      const userData: GuestUserData = {
+        user_id: user.user_id,
+        guest: true,
+      };
+
+      res
+        .status(200)
+        .send(createResponse(true, "Guest user token is valid", {...userData}));
+    } catch (e) {
+      console.error("Unexpected server error:", e);
+      res.status(500).send(createResponse(false, "Internal server error"));
+    }
+  }
+);
+
 router.post(
   "/logout",
-  authenticateGuestToken,
+  authenticateToken(false),
   async (req: AuthenticatedRequest, res: Response) => {
     try {
       //NOTE - remove guest user data if present
@@ -241,132 +340,12 @@ router.post(
   }
 );
 
-router.get(
-  "/validate-user-token",
-  authenticateToken,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const query = await knexDb("users")
-        .select(
-          "users.user_id",
-          "users.email",
-          "users.password",
-          "users.first_name",
-          "users.second_name",
-          "users.address"
-        )
-        .where("users.user_id", req.user_id);
-
-      if (query.length !== 1) {
-        return res
-          .status(400)
-          .send(createResponse(false, "Invalid credentials"));
-      }
-      const user = query[0];
-
-      const userData: BasicUserData = {
-        user_id: user.user_id,
-        guest: false,
-        email: user.email,
-        first_name: user.first_name,
-        second_name: user.second_name,
-        address: user.address,
-      };
-
-      res
-        .status(200)
-        .send(createResponse(true, "User token is valid", {...userData}));
-    } catch (e) {
-      console.error("Unexpected server error:", e);
-      res.status(500).send(createResponse(false, "Internal server error"));
-    }
-  }
-);
-
-router.get(
+/* router.get(
   "/protected",
   authenticateToken,
   (req: AuthenticatedRequest, res: Response) => {
     res.json({message: "Protected route", user_id: req.user_id});
   }
-);
-
-router.get(
-  "/validate-guest-token",
-  authenticateGuestToken,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const query = await knexDb("guest_users")
-        .select("guest_users.user_id")
-        .where("guest_users.user_id", req.user_id);
-
-      if (query.length !== 1) {
-        return res
-          .status(400)
-          .send(createResponse(false, "Invalid credentials"));
-      }
-      const user = query[0];
-
-      const userData: GuestUserData = {
-        user_id: user.user_id,
-        guest: true,
-      };
-
-      res
-        .status(200)
-        .send(createResponse(true, "Guest user token is valid", {...userData}));
-    } catch (e) {
-      console.error("Unexpected server error:", e);
-      res.status(500).send(createResponse(false, "Internal server error"));
-    }
-  }
-);
-
-router.post("/register-guest-token", async (req, res) => {
-  try {
-    if (!process.env.JWT_SECRET) throw new Error("Secret not defined");
-    const user_id = uuid();
-
-    const token = jwt.sign({user_id}, process.env.JWT_SECRET, {
-      expiresIn: "30d",
-    });
-
-    const saltRounds = 10;
-    bcrypt.hash(token, saltRounds, async function (err, hash) {
-      if (err) {
-        console.error("Error hashing token:", err);
-        return res
-          .status(500)
-          .send(createResponse(false, "Internal server error"));
-      }
-
-      await knexDb("guest_users").insert({
-        user_id: user_id,
-        token: hash,
-      });
-
-      const userData: GuestUserData = {
-        user_id: user_id,
-        guest: true,
-      };
-
-      res
-        .status(200)
-        .cookie("guestToken", token, {
-          httpOnly: true,
-          secure: Boolean(process.env.CONNECTION_SECURE),
-          sameSite: "none",
-          maxAge: 2592000000,
-        })
-        .send(
-          createResponse(true, "Guest user token registered successfully", {
-            ...userData,
-          })
-        );
-    });
-  } catch (e) {
-    console.error(e);
-  }
-});
+); */
 
 export default router;
