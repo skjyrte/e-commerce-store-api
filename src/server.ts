@@ -11,7 +11,7 @@ import cart from "./routes/cart.js";
 const corsOptions = {
   origin: process.env.ORIGIN,
   credentials: true,
-  secure: Boolean(process.env.CONNECTION_SECURE),
+  secure: process.env.CONNECTION_SECURE === "TRUE",
   optionsSuccessStatus: 200,
 };
 

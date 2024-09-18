@@ -49,7 +49,7 @@ const authenticateToken = (guest: boolean) => {
           return res
             .cookie(cookieName, "", {
               httpOnly: true,
-              secure: Boolean(process.env.CONNECTION_SECURE),
+              secure: process.env.CONNECTION_SECURE === "TRUE",
               sameSite: "none",
               expires: new Date(0),
             })
@@ -140,7 +140,7 @@ router.post("/register-guest-token", async (req, res) => {
         .status(200)
         .cookie("guestToken", token, {
           httpOnly: true,
-          secure: Boolean(process.env.CONNECTION_SECURE),
+          secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           maxAge: 2592000000,
         })
@@ -207,7 +207,7 @@ router.post("/login", async (req, res) => {
         .status(200)
         .cookie("token", token, {
           httpOnly: true,
-          secure: Boolean(process.env.CONNECTION_SECURE),
+          secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           maxAge: 3600000,
         })
@@ -322,13 +322,13 @@ router.post(
         .status(200)
         .cookie("token", "", {
           httpOnly: true,
-          secure: Boolean(process.env.CONNECTION_SECURE),
+          secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           expires: new Date(0),
         })
         .cookie("guestToken", "", {
           httpOnly: true,
-          secure: Boolean(process.env.CONNECTION_SECURE),
+          secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           expires: new Date(0),
         })

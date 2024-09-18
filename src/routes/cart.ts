@@ -51,7 +51,7 @@ const authenticateToken = (
         return res
           .cookie(cookieName, "", {
             httpOnly: true,
-            secure: Boolean(process.env.CONNECTION_SECURE),
+            secure: process.env.CONNECTION_SECURE === "TRUE",
             sameSite: "none",
             expires: new Date(0),
           })
