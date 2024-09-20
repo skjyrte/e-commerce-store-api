@@ -54,6 +54,8 @@ const authenticateToken = (
             secure: process.env.CONNECTION_SECURE === "TRUE",
             sameSite: "none",
             expires: new Date(0),
+            domain: process.env.CONNECTION_DOMAIN,
+            path: "/",
           })
           .status(403)
           .send(createResponse(false, "Invalid credentials"));

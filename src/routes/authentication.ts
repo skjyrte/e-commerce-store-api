@@ -52,6 +52,8 @@ const authenticateToken = (guest: boolean) => {
               secure: process.env.CONNECTION_SECURE === "TRUE",
               sameSite: "none",
               expires: new Date(0),
+              domain: process.env.CONNECTION_DOMAIN,
+              path: "/",
             })
             .status(403)
             .send(createResponse(false, "Invalid credentials"));
@@ -143,6 +145,8 @@ router.post("/register-guest-token", async (req, res) => {
           secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           maxAge: 2592000000,
+          domain: process.env.CONNECTION_DOMAIN,
+          path: "/",
         })
         .send(
           createResponse(true, "Guest user token registered successfully", {
@@ -210,6 +214,8 @@ router.post("/login", async (req, res) => {
           secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           maxAge: 3600000,
+          domain: process.env.CONNECTION_DOMAIN,
+          path: "/",
         })
         .send(createResponse(true, "Login successful", {...userData}));
     });
@@ -325,12 +331,16 @@ router.post(
           secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           expires: new Date(0),
+          domain: process.env.CONNECTION_DOMAIN,
+          path: "/",
         })
         .cookie("guestToken", "", {
           httpOnly: true,
           secure: process.env.CONNECTION_SECURE === "TRUE",
           sameSite: "none",
           expires: new Date(0),
+          domain: process.env.CONNECTION_DOMAIN,
+          path: "/",
         })
         .send(createResponse(true, "Logout successful"));
     } catch (e) {
