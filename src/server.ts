@@ -7,6 +7,7 @@ import authenticationRoute from "./routes/authentication.js";
 import knexDb from "./knexDb.js";
 import cookieParser from "cookie-parser";
 import cart from "./routes/cart.js";
+import ping from "./routes/ping.js";
 
 const corsOptions = {
   origin: process.env.ORIGIN,
@@ -27,6 +28,7 @@ app.use("/product", productRoute);
 app.use("/gender", genderRoute);
 app.use("/auth", authenticationRoute);
 app.use("/cart", cart);
+app.use("/ping", ping);
 
 const PORT = process.env.PORT;
 const server = app.listen(PORT, () => {
